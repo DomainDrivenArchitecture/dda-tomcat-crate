@@ -1,14 +1,21 @@
-# dda-tomcat-crate
 
-A Clojure library designed to ... well, that part is up to you.
+# tomcat-crate and liferay-crate
 
-## Usage
+## Compatibility
+The crates run and work on
+ * pallet 0.8
+ * ubuntu 14.04
 
-FIXME
+## Functionality and interaction
+
+
+### tomcat
+* tomcat-crate installs a tomcat7
+* tomcat-crate provides functions that allow that allow the configuration of tomcat config files (such as ROOT.xml, server.xml, etc.)
+
 
 ## License
 
-Copyright © 2015 FIXME
+Copyright © 2015, Michael Jerger, Tobias Scherer
 
-Distributed under the Eclipse Public License either version 1.0 or (at
-your option) any later version.
+Distributed under the Apache 2.0 License.
