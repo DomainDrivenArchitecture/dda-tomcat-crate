@@ -1,4 +1,4 @@
-(defproject org.domaindrivenarchitecture/dda-tomcat-crate "0.1.0"
+(defproject org.domaindrivenarchitecture/dda-tomcat-crate "0.1.1"
   :description "The dda tomcat crate"
   :url "https://www.domaindrivenarchitecture.org"
   :pallet {:source-paths ["src"]}
@@ -6,14 +6,13 @@
             :url "https://www.apache.org/licenses/LICENSE-2.0.html"}
   :dependencies [[org.clojure/clojure "1.6.0"]
                  [com.palletops/leaven "0.3.1"]
-                 [com.palletops/pallet "0.8.2"]
-                 [com.palletops/pallet "0.8.2" :classifier "tests"]
+                 [com.palletops/pallet "0.8.10"]
                  [com.palletops/stevedore "0.8.0-beta.7"]
                  [ch.qos.logback/logback-classic "1.0.9"]
-                 [org.domaindrivenarchitecture.org/dda-config-crate "0.2.0"]]
+                 [org.domaindrivenarchitecture.org/dda-config-crate "0.3.0-SNAPSHOT"]]
   :profiles {:dev
              {:dependencies
-              [[com.palletops/pallet "0.8.2" :classifier "tests"]
+              [[com.palletops/pallet "0.8.10" :classifier "tests"]
                ]
               :plugins
               [[com.palletops/pallet-lein "0.8.0-alpha.1"]]}
