@@ -66,7 +66,7 @@ other case the default ubuntu package is used."
    :java-package (cond
                    (= custom-java-version :6) "openjdk-6-jdk"
                    :else "openjdk-7-jdk")
-   :download-url "http://ftp.halifax.rwth-aachen.de/apache/tomcat/tomcat-7/v7.0.64/bin/apache-tomcat-7.0.64.tar.gz"
+   :download-url "http://apache.openmirror.de/tomcat/tomcat-7/v7.0.68/bin/apache-tomcat-7.0.68.tar.gz"
    :with-manager-webapps with-manager-webapps 
    }))
 
