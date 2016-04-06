@@ -8,7 +8,7 @@
                  [com.palletops/leaven "0.3.1"]
                  [com.palletops/pallet "0.8.11"]
                  [com.palletops/stevedore "0.8.0-beta.7"]
-                 [org.domaindrivenarchitecture.org/dda-config-crate "0.3.0-SNAPSHOT"]]
+                 [org.domaindrivenarchitecture/dda-config-crate "0.3.1-SNAPSHOT"]]
   :profiles {:dev
              {:dependencies
               [[com.palletops/pallet "0.8.11" :classifier "tests"]
