@@ -5,9 +5,11 @@
   :license {:name "Apache License, Version 2.0"
             :url "https://www.apache.org/licenses/LICENSE-2.0.html"}
   :dependencies [[org.clojure/clojure "1.7.0"]
-                 [com.palletops/leaven "0.3.1"]
+                 [prismatic/schema "1.0.5"]
+                 [metosin/schema-tools "0.7.0"]
                  [com.palletops/pallet "0.8.11"]
                  [com.palletops/stevedore "0.8.0-beta.7"]
+                 [org.domaindrivenarchitecture/dda-config-commons "0.1.0-SNAPSHOT"]
                  [org.domaindrivenarchitecture/dda-config-crate "0.3.1-SNAPSHOT"]]
   :profiles {:dev
              {:dependencies

@@ -16,11 +16,35 @@
 
 (ns org.domaindrivenarchitecture.pallet.crate.tomcat 
   (:require
-      [pallet.actions :as actions]
-      [pallet.api :as api]
-      [org.domaindrivenarchitecture.pallet.crate.tomcat.app :as tomcat-app]
-      ))
+    [schema.core :as s]
+    [schema-tools.core :as st]
+    [pallet.actions :as actions]
+    [pallet.api :as api]
+    [org.domaindrivenarchitecture.pallet.crate.config :as config]
+    [org.domaindrivenarchitecture.config.commons.directory-model :as dir-model]
+    [org.domaindrivenarchitecture.pallet.crate.tomcat.app :as tomcat-app]
+    ))
 
+(def TomcatConfig
+  "The configuration for tomcat crate." 
+  {:Xmx s/Str
+   :Xms s/Str
+   :MaxPermSize s/Str
+   :home-dir dir-model/NonRootDirectory
+   :webapps-dir dir-model/NonRootDirectory})
+
+(def tomcat-default-config
+  "Tomcat Crate Default Configuration"
+  {:Xmx "1024m"
+   :Xms "256m"
+   :MaxPermSize "512m"
+   :home-dir "/var/lib/tomcat7/"
+   :webapps-dir "/var/lib/tomcat7/webapps/"})
+
+(s/defn ^:always-validate merge-config :- TomcatConfig
+  "merges the partial config with default config & ensures that resulting config is valid."
+  [partial-config]
+  (config/deep-merge tomcat-default-config partial-config))
 
 
 (def ^:dynamic with-tomcat
