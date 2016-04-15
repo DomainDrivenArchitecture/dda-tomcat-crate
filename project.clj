@@ -1,4 +1,4 @@
-(defproject org.domaindrivenarchitecture/dda-tomcat-crate "0.1.1-SNAPSHOT"
+(defproject org.domaindrivenarchitecture/dda-tomcat-crate "0.1.1"
   :description "The dda tomcat crate"
   :url "https://www.domaindrivenarchitecture.org"
   :pallet {:source-paths ["src"]}
@@ -9,8 +9,8 @@
                  [metosin/schema-tools "0.7.0"]
                  [com.palletops/pallet "0.8.11"]
                  [com.palletops/stevedore "0.8.0-beta.7"]
-                 [org.domaindrivenarchitecture/dda-config-commons "0.1.0-SNAPSHOT"]
-                 [org.domaindrivenarchitecture/dda-config-crate "0.3.1-SNAPSHOT"]]
+                 [org.domaindrivenarchitecture/dda-config-commons "0.1.0"]
+                 [org.domaindrivenarchitecture/dda-config-crate "0.3.1"]]
   :profiles {:dev
              {:dependencies
               [[com.palletops/pallet "0.8.11" :classifier "tests"]
