@@ -20,6 +20,7 @@
     [schema-tools.core :as st]
     [pallet.actions :as actions]
     [pallet.api :as api]
+    [org.domaindrivenarchitecture.config.commons.map-utils :as map-utils]
     [org.domaindrivenarchitecture.pallet.crate.config :as config]
     [org.domaindrivenarchitecture.config.commons.directory-model :as dir-model]
     [org.domaindrivenarchitecture.pallet.crate.tomcat.app :as tomcat-app]
@@ -44,7 +45,7 @@
 (s/defn ^:always-validate merge-config :- TomcatConfig
   "merges the partial config with default config & ensures that resulting config is valid."
   [partial-config]
-  (config/deep-merge tomcat-default-config partial-config))
+  (map-utils/deep-merge tomcat-default-config partial-config))
 
 
 (def ^:dynamic with-tomcat
