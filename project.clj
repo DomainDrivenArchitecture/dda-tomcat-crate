@@ -1,4 +1,4 @@
-(defproject org.domaindrivenarchitecture/dda-tomcat-crate "0.1.3-SNAPSHOT"
+(defproject org.domaindrivenarchitecture/dda-tomcat-crate "0.1.3"
   :description "The dda tomcat crate"
   :url "https://www.domaindrivenarchitecture.org"
   :pallet {:source-paths ["src"]}
@@ -7,13 +7,13 @@
   :dependencies [[org.clojure/clojure "1.7.0"]
                  [prismatic/schema "1.1.0"]
                  [metosin/schema-tools "0.9.0"]
-                 [com.palletops/pallet "0.8.11"]
+                 [com.palletops/pallet "0.8.12"]
                  [com.palletops/stevedore "0.8.0-beta.7"]
-                 [org.domaindrivenarchitecture/dda-config-commons "0.1.1-SNAPSHOT"]
-                 [org.domaindrivenarchitecture/dda-config-crate "0.3.2-SNAPSHOT"]]
+                 [org.domaindrivenarchitecture/dda-config-commons "0.1.1"]
+                 [org.domaindrivenarchitecture/dda-config-crate "0.3.2"]]
   :profiles {:dev
              {:dependencies
-              [[com.palletops/pallet "0.8.11" :classifier "tests"]
+              [[com.palletops/pallet "0.8.12" :classifier "tests"]
                ]
               :plugins
               [[com.palletops/pallet-lein "0.8.0-alpha.1"]]}
