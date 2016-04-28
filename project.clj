@@ -1,4 +1,4 @@
-(defproject org.domaindrivenarchitecture/dda-tomcat-crate "0.1.3"
+(defproject org.domaindrivenarchitecture/dda-tomcat-crate "0.1.4-SNAPSHOT"
   :description "The dda tomcat crate"
   :url "https://www.domaindrivenarchitecture.org"
   :pallet {:source-paths ["src"]}
