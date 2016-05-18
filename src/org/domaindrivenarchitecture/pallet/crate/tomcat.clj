@@ -21,7 +21,7 @@
     [pallet.actions :as actions]
     [pallet.api :as api]
     [org.domaindrivenarchitecture.config.commons.map-utils :as map-utils]
-    [org.domaindrivenarchitecture.pallet.crate.config :as config]
+    [org.domaindrivenarchitecture.pallet.crate.config-0-3 :as config]
     [org.domaindrivenarchitecture.config.commons.directory-model :as dir-model]
     [org.domaindrivenarchitecture.pallet.crate.tomcat.app :as tomcat-app]
     ))
