@@ -19,6 +19,8 @@
    (:require
      [pallet.actions :as actions]
      [clojure.string :as string]
+     [schema.core :as s]
+     [org.domaindrivenarchitecture.config.commons.map-utils :as map-utils]
     ))
 
 ;;
@@ -30,6 +32,32 @@
 ;
 ; lines for tomcat default installation
 ; 
+
+
+
+(def ServerXmlConfig
+  "The configuration needed for the server-xml file"
+  {:shutdown-port s/Str
+   (s/optional-key :ajp-port) s/Any
+   (s/optional-key :http-port) s/Str
+   :service-name s/Str
+   :protocol s/Str
+   :executorMaxThreads s/Str
+   :connectorMaxThreads s/Str
+   :connectionTimeout s/Str
+   })
+
+(def defaultServerXmlConfig
+  "The default configuration needed for the server-xml file"
+  {:shutdown-port "8005"
+   :service-name "Catalina"
+   :protocol "AJP/1.3"
+   :executorMaxThreads "161"
+   :connectorMaxThreads "151"
+   :connectionTimeout "61000"
+   })
+
+
 
 (def var-lib-tomcat7-webapps-ROOT-META-INF-context-xml
   [
@@ -74,10 +102,8 @@
   )
 
 (defn server-xml
-  [&{:keys [shutdown-port ajp-port http-port]
-     :or {shutdown-port "8005" 
-          ajp-port nil 
-          http-port "8080"}}]
+  "the server-xml, takes a partial-config which will be merged with the default-server-xml-config"
+  [config]
   ["<?xml version='1.0' encoding='utf-8'?>"
   "<!--"
   " Licensed to the Apache Software Foundation (ASF) under one or more"
@@ -99,7 +125,7 @@
   "     define subcomponents such as \"Valves\" at this level."
   "     Documentation at /docs/config/server.html"
   "-->"
-  "<Server port=\"8005\" shutdown=\"SHUTDOWN\">"
+  (str "<Server port=\"" (get config :shutdown-port) "\" shutdown=\"SHUTDOWN\">")
   "  <!-- Security listener. Documentation at /docs/config/listeners.html"
   "  <Listener className=\"org.apache.catalina.security.SecurityListener\" />"
   "  -->"
@@ -133,12 +159,12 @@
   "       so you may not define subcomponents such as \"Valves\" at this level."
   "       Documentation at /docs/config/service.html"
   "   -->"
-  "  <Service name=\"Catalina\">"
+  (str "  <Service name=\"" (get config :service-name) "\">")
   ""
   "    <!--The connectors can use a shared executor, you can define one or more named thread pools-->"
   "    <!--"
   "    <Executor name=\"tomcatThreadPool\" namePrefix=\"catalina-exec-\""
-  "        maxThreads=\"150\" minSpareThreads=\"4\"/>"
+  (str "        maxThreads=\"" (get config :executorMaxThreads) "\" minSpareThreads=\"4\"/>")
   "    -->"
   ""
   ""
@@ -149,15 +175,15 @@
   "         APR (HTTP/AJP) Connector: /docs/apr.html"
   "         Define a non-SSL HTTP/1.1 Connector on port 8080"
   "    -->"
-  "    <Connector port=\"8080\" protocol=\"HTTP/1.1\""
-  "               connectionTimeout=\"20000\""
+  (str "    <Connector port=\"" (get config :http-port) "\" protocol=\"" (get config :protocol) "\"")
+  (str "               connectionTimeout=\"" (get config :connectionTimeout) "\"")
   "               URIEncoding=\"UTF-8\""
   "               redirectPort=\"8443\" />"
   "    <!-- A \"Connector\" using the shared thread pool-->"
   "    <!--"
-  "    <Connector executor=\"tomcatThreadPool\""
-  "               port=\"8080\" protocol=\"HTTP/1.1\""
-  "               connectionTimeout=\"20000\""
+  (str "    <Connector executor=\"" (get config :executor) "\"")
+  (str "               port=\"" (get config :http-port) "\" protocol=\"" (get config :protocol) "\"")
+  (str "               connectionTimeout=\"" (get config :connectionTimeout) "\"")
   "               redirectPort=\"8443\" />"
   "    -->"
   "    <!-- Define a SSL HTTP/1.1 Connector on port 8443"
@@ -224,8 +250,8 @@
   "      </Host>"
   "    </Engine>"
   "  </Service>"
-  "</Server>"]
-  )
+  "</Server>"])
+  
 
 (defn setenv-sh
   [&{:keys [Xmx Xms MaxPermSize jdk6]

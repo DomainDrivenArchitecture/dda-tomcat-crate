@@ -165,7 +165,7 @@ other case the default ubuntu package is used."
              lines-etc-default-tomcat7 lines-server-xml lines-catalina-properties
              lines-ROOT-xml lines-setenv-sh]
       :or {lines-etc-default-tomcat7 (config/default-tomcat7)
-           lines-server-xml (config/server-xml)
+           lines-server-xml (config/server-xml {})
            lines-catalina-properties nil 
            lines-ROOT-xml nil
            lines-setenv-sh (config/setenv-sh)}}]

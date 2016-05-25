@@ -24,6 +24,7 @@
     [org.domaindrivenarchitecture.pallet.crate.config-0-3 :as config]
     [org.domaindrivenarchitecture.config.commons.directory-model :as dir-model]
     [org.domaindrivenarchitecture.pallet.crate.tomcat.app :as tomcat-app]
+    [org.domaindrivenarchitecture.pallet.crate.tomcat.app-config :as app-config]
     ))
 
 (def TomcatConfig
@@ -32,21 +33,18 @@
    :Xms s/Str
    :MaxPermSize s/Str
    :home-dir dir-model/NonRootDirectory
-   :webapps-dir dir-model/NonRootDirectory})
+   :webapps-dir dir-model/NonRootDirectory
+   :ServerXmlConfig app-config/ServerXmlConfig
+   })
 
-(def tomcat-default-config
+(def tomcatDefaultConfig
   "Tomcat Crate Default Configuration"
   {:Xmx "1024m"
    :Xms "256m"
    :MaxPermSize "512m"
    :home-dir "/var/lib/tomcat7/"
-   :webapps-dir "/var/lib/tomcat7/webapps/"})
-
-(s/defn ^:always-validate merge-config :- TomcatConfig
-  "merges the partial config with default config & ensures that resulting config is valid."
-  [partial-config]
-  (map-utils/deep-merge tomcat-default-config partial-config))
-
+   :webapps-dir "/var/lib/tomcat7/webapps/"
+   :ServerXmlConfig app-config/defaultServerXmlConfig})
 
 (def ^:dynamic with-tomcat
   (api/server-spec
@@ -56,3 +54,8 @@
        (tomcat-app/install-tomcat7)
        )
     }))
+
+(s/defn ^:always-validate merge-config :- TomcatConfig
+  "merges the partial config with default config & ensures that resulting config is valid."
+  [partial-config]
+  (map-utils/deep-merge tomcatDefaultConfig partial-config))
