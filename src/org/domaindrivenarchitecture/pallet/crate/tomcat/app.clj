@@ -39,6 +39,7 @@
         \newline
         content))))
 
+; TODO: review jem: 2016_05_25: Pls. investigate, whether we use defaults here.
 (defn tomcat-config
   "Provides a map with all tomcat configurations. If parameter 
 custom-home is provided, then a custom tomcat is installed. In 

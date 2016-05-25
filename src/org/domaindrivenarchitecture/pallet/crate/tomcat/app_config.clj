@@ -23,18 +23,6 @@
      [org.domaindrivenarchitecture.config.commons.map-utils :as map-utils]
     ))
 
-;;
-;; function for uniform config files
-;; 
-
-
-
-;
-; lines for tomcat default installation
-; 
-
-
-
 (def ServerXmlConfig
   "The configuration needed for the server-xml file"
   {:shutdown-port s/Str
@@ -57,19 +45,12 @@
    :connectionTimeout "61000"
    })
 
-
-
 (def var-lib-tomcat7-webapps-ROOT-META-INF-context-xml
-  [
-   "<Context path=\"/\"" 
-   "antiResourceLocking=\"false\" />"
-   ]
-  )
+  ["<Context path=\"/\"" 
+   "antiResourceLocking=\"false\" />"])
 
 (def var-lib-tomcat7-webapps-ROOT-index-html
-  
-  [
-   "  <?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>"
+  ["  <?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>"
    "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\""
    "   \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">"
    "<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\" lang=\"en\">"
@@ -101,9 +82,10 @@
    ]  
   )
 
-(defn server-xml
-  "the server-xml, takes a partial-config which will be merged with the default-server-xml-config"
-  [config]
+; TODO: review jem: 2016_05_25: why not use a specified parameter?
+(s/defn server-xml
+  "the server-xml generator function."
+  [config :- ServerXmlConfig]
   ["<?xml version='1.0' encoding='utf-8'?>"
   "<!--"
   " Licensed to the Apache Software Foundation (ASF) under one or more"
@@ -125,6 +107,8 @@
   "     define subcomponents such as \"Valves\" at this level."
   "     Documentation at /docs/config/server.html"
   "-->"
+  
+; TODO: review jem: 2016_05_25: lets use the "(get-in map [:key1 :key2]) function to access configuration 
   (str "<Server port=\"" (get config :shutdown-port) "\" shutdown=\"SHUTDOWN\">")
   "  <!-- Security listener. Documentation at /docs/config/listeners.html"
   "  <Listener className=\"org.apache.catalina.security.SecurityListener\" />"
@@ -253,6 +237,7 @@
   "</Server>"])
   
 
+; TODO: review jem: 2016_05_25: why not use config? - Pls. do not use defaults here, we should have only one place for defaults.
 (defn setenv-sh
   [&{:keys [Xmx Xms MaxPermSize jdk6]
      :or {Xms "1536m"
@@ -272,6 +257,7 @@
    ]
   )
 
+; TODO: review jem: 2016_05_25: why not use config? - Pls. do not use defaults here, we should have only one place for defaults.
 (defn default-tomcat7
   [&{:keys [Xmx Xms MaxPermSize jdk6]
      :or {Xms "1536m"
