@@ -27,5 +27,5 @@
     "test the default config definition" 
       (is (s/validate
             sut/TomcatConfig
-            sut/tomcat-default-config))
+            sut/tomcatDefaultConfig))
       ))
