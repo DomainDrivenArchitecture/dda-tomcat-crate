@@ -45,7 +45,6 @@
    :connectionTimeout "61000"
    })
 
-;TODO: This variable name should be reviewed.
 (def HeapConfig
   "The configuration of the heap settings"
   {:Xms s/Str
@@ -60,6 +59,19 @@
    :Xmx "2560m"
    :MaxPermSize "512m"
    :jdk6 false})
+
+;TODO: This config name needs to be reviewed
+(def CustomConfig
+  {:custom-tomcat-home s/Any
+   :custom-java-version s/Keyword
+   :with-manager-webapps s/Bool})
+
+(def defaultCustomConfig
+  ""
+  {:custom-tomcat-home nil
+   :custom-java-version :7
+   :with-manager-webapps false})
+      
 
 (def var-lib-tomcat7-webapps-ROOT-META-INF-context-xml
   ["<Context path=\"/\"" 

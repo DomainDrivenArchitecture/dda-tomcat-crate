@@ -20,6 +20,7 @@
      [pallet.actions :as actions]
      [pallet.stevedore :as stevedore]
      [org.domaindrivenarchitecture.pallet.crate.tomcat.app-config :as config]
+     [schema.core :as s]
     ))
 
 (defn- write-tomcat-file
@@ -39,20 +40,14 @@
         \newline
         content))))
 
-; TODO: review jem: 2016_05_25: Pls. investigate, whether we use defaults here.
-(defn tomcat-config
+(s/defn tomcat-config
   "Provides a map with all tomcat configurations. If parameter 
 custom-home is provided, then a custom tomcat is installed. In 
 other case the default ubuntu package is used."
-  [& {:keys [custom-tomcat-home
-             custom-java-version
-             with-manager-webapps]
-      :or {custom-tomcat-home nil
-           custom-java-version :7
-           with-manager-webapps false}}]
-  (let [os-package (empty? custom-tomcat-home)
-        tomcat-home (if os-package "/var/lib/tomcat7" custom-tomcat-home)
-        config-base (if os-package "/etc/tomcat7" (str custom-tomcat-home "/conf"))
+  [config :- config/CustomConfig]
+  (let [os-package (empty? (get-in config [:custom-tomcat-home]))
+        tomcat-home (if os-package "/var/lib/tomcat7" (get-in config [:custom-tomcat-home]))
+        config-base (if os-package "/etc/tomcat7" (str (get-in config [:custom-tomcat-home]) "/conf"))
         custom-tomcat-bin (if os-package "/usr/share/tomcat7/bin" (str tomcat-home "/bin"))]
   {:os-package os-package
    :tomcat-home tomcat-home
@@ -65,10 +60,10 @@ other case the default ubuntu package is used."
    :webapps (str tomcat-home "/webapps")
    :webapps-root-xml (str config-base "/Catalina/localhost/ROOT.xml")
    :java-package (cond
-                   (= custom-java-version :6) "openjdk-6-jdk"
+                   (= (get-in config [:custom-java-version]) :6) "openjdk-6-jdk"
                    :else "openjdk-7-jdk")
    :download-url "http://apache.openmirror.de/tomcat/tomcat-7/v7.0.68/bin/apache-tomcat-7.0.68.tar.gz"
-   :with-manager-webapps with-manager-webapps 
+   :with-manager-webapps (get-in config [:with-manager-webapps]) 
    }))
 
 (defn- make-tomcat-executable

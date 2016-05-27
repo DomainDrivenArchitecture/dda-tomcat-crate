@@ -36,6 +36,7 @@
    :webapps-dir dir-model/NonRootDirectory
    :ServerXmlConfig app-config/ServerXmlConfig
    :HeapConfig app-config/HeapConfig
+   :CustomConfig app-config/CustomConfig
    })
 
 (def tomcatDefaultConfig
@@ -46,7 +47,8 @@
    :home-dir "/var/lib/tomcat7/"
    :webapps-dir "/var/lib/tomcat7/webapps/"
    :ServerXmlConfig app-config/defaultServerXmlConfig
-   :HeapConfig app-config/defaultHeapConfig})
+   :HeapConfig app-config/defaultHeapConfig
+   :CustomConfig app-config/defaultCustomConfig})
 
 (def ^:dynamic with-tomcat
   (api/server-spec
