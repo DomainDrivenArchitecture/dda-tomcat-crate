@@ -35,6 +35,7 @@
    :home-dir dir-model/NonRootDirectory
    :webapps-dir dir-model/NonRootDirectory
    :ServerXmlConfig app-config/ServerXmlConfig
+   :HeapConfig app-config/HeapConfig
    })
 
 (def tomcatDefaultConfig
@@ -44,7 +45,8 @@
    :MaxPermSize "512m"
    :home-dir "/var/lib/tomcat7/"
    :webapps-dir "/var/lib/tomcat7/webapps/"
-   :ServerXmlConfig app-config/defaultServerXmlConfig})
+   :ServerXmlConfig app-config/defaultServerXmlConfig
+   :HeapConfig app-config/defaultHeapConfig})
 
 (def ^:dynamic with-tomcat
   (api/server-spec

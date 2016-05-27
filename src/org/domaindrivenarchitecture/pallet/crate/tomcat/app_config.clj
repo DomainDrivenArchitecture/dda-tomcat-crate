@@ -45,6 +45,22 @@
    :connectionTimeout "61000"
    })
 
+;TODO: This variable name should be reviewed.
+(def HeapConfig
+  "The configuration of the heap settings"
+  {:Xms s/Str
+   :Xmx s/Str
+   :MaxPermSize s/Str
+   :jdk6 s/Bool}
+  )
+
+(def defaultHeapConfig
+  "The default configuration of the heap settings"
+  {:Xms "1536m"
+   :Xmx "2560m"
+   :MaxPermSize "512m"
+   :jdk6 false})
+
 (def var-lib-tomcat7-webapps-ROOT-META-INF-context-xml
   ["<Context path=\"/\"" 
    "antiResourceLocking=\"false\" />"])
@@ -82,7 +98,6 @@
    ]  
   )
 
-; TODO: review jem: 2016_05_25: why not use a specified parameter?
 (s/defn server-xml
   "the server-xml generator function."
   [config :- ServerXmlConfig]
@@ -107,9 +122,7 @@
   "     define subcomponents such as \"Valves\" at this level."
   "     Documentation at /docs/config/server.html"
   "-->"
-  
-; TODO: review jem: 2016_05_25: lets use the "(get-in map [:key1 :key2]) function to access configuration 
-  (str "<Server port=\"" (get config :shutdown-port) "\" shutdown=\"SHUTDOWN\">")
+  (str "<Server port=\"" (get-in config :shutdown-port) "\" shutdown=\"SHUTDOWN\">")
   "  <!-- Security listener. Documentation at /docs/config/listeners.html"
   "  <Listener className=\"org.apache.catalina.security.SecurityListener\" />"
   "  -->"
@@ -143,12 +156,12 @@
   "       so you may not define subcomponents such as \"Valves\" at this level."
   "       Documentation at /docs/config/service.html"
   "   -->"
-  (str "  <Service name=\"" (get config :service-name) "\">")
+  (str "  <Service name=\"" (get-in config :service-name) "\">")
   ""
   "    <!--The connectors can use a shared executor, you can define one or more named thread pools-->"
   "    <!--"
   "    <Executor name=\"tomcatThreadPool\" namePrefix=\"catalina-exec-\""
-  (str "        maxThreads=\"" (get config :executorMaxThreads) "\" minSpareThreads=\"4\"/>")
+  (str "        maxThreads=\"" (get-in config :executorMaxThreads) "\" minSpareThreads=\"4\"/>")
   "    -->"
   ""
   ""
@@ -159,15 +172,15 @@
   "         APR (HTTP/AJP) Connector: /docs/apr.html"
   "         Define a non-SSL HTTP/1.1 Connector on port 8080"
   "    -->"
-  (str "    <Connector port=\"" (get config :http-port) "\" protocol=\"" (get config :protocol) "\"")
-  (str "               connectionTimeout=\"" (get config :connectionTimeout) "\"")
+  (str "    <Connector port=\"" (get-in config :http-port) "\" protocol=\"" (get-in config :protocol) "\"")
+  (str "               connectionTimeout=\"" (get-in config :connectionTimeout) "\"")
   "               URIEncoding=\"UTF-8\""
   "               redirectPort=\"8443\" />"
   "    <!-- A \"Connector\" using the shared thread pool-->"
   "    <!--"
-  (str "    <Connector executor=\"" (get config :executor) "\"")
-  (str "               port=\"" (get config :http-port) "\" protocol=\"" (get config :protocol) "\"")
-  (str "               connectionTimeout=\"" (get config :connectionTimeout) "\"")
+  (str "    <Connector executor=\"" (get-in config :executor) "\"")
+  (str "               port=\"" (get-in config :http-port) "\" protocol=\"" (get-in config :protocol) "\"")
+  (str "               connectionTimeout=\"" (get-in config :connectionTimeout) "\"")
   "               redirectPort=\"8443\" />"
   "    -->"
   "    <!-- Define a SSL HTTP/1.1 Connector on port 8443"
@@ -236,45 +249,34 @@
   "  </Service>"
   "</Server>"])
   
-
-; TODO: review jem: 2016_05_25: why not use config? - Pls. do not use defaults here, we should have only one place for defaults.
-(defn setenv-sh
-  [&{:keys [Xmx Xms MaxPermSize jdk6]
-     :or {Xms "1536m"
-          Xmx "2560m"
-          MaxPermSize "512m"
-          jdk6 false}}]
-  [(if jdk6 
+(s/defn setenv-sh
+  [config :- HeapConfig]
+  [(if (get-in config [:jdk6]) 
      "JAVA_HOME=/usr/lib/jvm/java-1.6.0-openjdk-amd64"
      "#JAVA_HOME=/usr/lib/jvm/java-1.6.0-openjdk-amd64")
    (str "JAVA_OPTS=\"$JAVA_OPTS"
         " -Dfile.encoding=UTF8"
         " -Dorg.apache.catalina.loader.WebappClassLoader.ENABLE_CLEAR_REFERENCES=false"
         " -Duser.timezone=GMT"
-        " -Xms" Xms
-        " -Xmx" Xmx
-        " -XX:MaxPermSize=" MaxPermSize "\"")
+        " -Xms" (get-in config [:Xms])
+        " -Xmx" (get-in config [:Xmx])
+        " -XX:MaxPermSize=" (get-in config [:MaxPermSize]) "\"")
    ]
   )
 
-; TODO: review jem: 2016_05_25: why not use config? - Pls. do not use defaults here, we should have only one place for defaults.
-(defn default-tomcat7
-  [&{:keys [Xmx Xms MaxPermSize jdk6]
-     :or {Xms "1536m"
-          Xmx "2560m"
-          MaxPermSize "512m"
-          jdk6 false}}]
+(s/defn default-tomcat7
+  [config :- HeapConfig]
   ["TOMCAT7_USER=tomcat7"
    "TOMCAT7_GROUP=tomcat7"
-   (if jdk6 
+   (if (get-in config [:jdk6]) 
      "JAVA_HOME=/usr/lib/jvm/java-1.6.0-openjdk-amd64"
      "#JAVA_HOME=/usr/lib/jvm/java-1.6.0-openjdk-amd64")
    (str "JAVA_OPTS=\"-Dfile.encoding=UTF8 -Djava.net.preferIPv4Stack=true"
         " -Dorg.apache.catalina.loader.WebappClassLoader.ENABLE_CLEAR_REFERENCES=false"
         " -Duser.timezone=GMT"
-        " -Xms" Xms
-        " -Xmx" Xmx
-        " -XX:MaxPermSize=" MaxPermSize
+        " -Xms" (get-in config [:Xms])
+        " -Xmx" (get-in config [:Xmx])
+        " -XX:MaxPermSize=" (get-in config [:MaxPermSize])
         " -XX:+UseConcMarkSweepGC\"")
    "#JAVA_OPTS=\"${JAVA_OPTS} -Xdebug -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n\""
    "TOMCAT7_SECURITY=no"
