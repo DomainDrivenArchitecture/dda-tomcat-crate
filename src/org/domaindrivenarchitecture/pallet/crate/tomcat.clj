@@ -29,26 +29,26 @@
 
 (def TomcatConfig
   "The configuration for tomcat crate." 
-  {:Xmx s/Str
-   :Xms s/Str
-   :MaxPermSize s/Str
+  {:xmx s/Str
+   :xms s/Str
+   :max-perm-size s/Str
    :home-dir dir-model/NonRootDirectory
    :webapps-dir dir-model/NonRootDirectory
-   :ServerXmlConfig app-config/ServerXmlConfig
-   :HeapConfig app-config/HeapConfig
-   :CustomConfig app-config/CustomConfig
+   :server-xml-config app-config/ServerXmlConfig
+   :java-vm-config app-config/JavaVmConfig
+   :custom-config app-config/CustomConfig
    })
 
 (def tomcatDefaultConfig
   "Tomcat Crate Default Configuration"
-  {:Xmx "1024m"
-   :Xms "256m"
-   :MaxPermSize "512m"
+  {:xmx "1024m"
+   :xms "256m"
+   :max-perm-size "512m"
    :home-dir "/var/lib/tomcat7/"
    :webapps-dir "/var/lib/tomcat7/webapps/"
-   :ServerXmlConfig app-config/defaultServerXmlConfig
-   :HeapConfig app-config/defaultHeapConfig
-   :CustomConfig app-config/defaultCustomConfig})
+   :server-xml-config app-config/default-server-xml-config
+   :java-vm-config app-config/default-heap-config
+   :custom-config app-config/default-custom-config})
 
 (def ^:dynamic with-tomcat
   (api/server-spec

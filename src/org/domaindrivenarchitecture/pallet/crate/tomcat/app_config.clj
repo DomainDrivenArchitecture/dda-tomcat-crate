@@ -35,7 +35,7 @@
    :connectionTimeout s/Str
    })
 
-(def defaultServerXmlConfig
+(def default-server-xml-config
   "The default configuration needed for the server-xml file"
   {:shutdown-port "8005"
    :service-name "Catalina"
@@ -45,19 +45,19 @@
    :connectionTimeout "61000"
    })
 
-(def HeapConfig
+(def JavaVmConfig
   "The configuration of the heap settings"
-  {:Xms s/Str
-   :Xmx s/Str
-   :MaxPermSize s/Str
+  {:xms s/Str
+   :xmx s/Str
+   :max-perm-size s/Str
    :jdk6 s/Bool}
   )
 
-(def defaultHeapConfig
+(def default-heap-config
   "The default configuration of the heap settings"
-  {:Xms "1536m"
-   :Xmx "2560m"
-   :MaxPermSize "512m"
+  {:xms "1536m"
+   :xmx "2560m"
+   :max-perm-size "512m"
    :jdk6 false})
 
 ;TODO: This config name needs to be reviewed
@@ -66,7 +66,7 @@
    :custom-java-version s/Keyword
    :with-manager-webapps s/Bool})
 
-(def defaultCustomConfig
+(def default-custom-config
   ""
   {:custom-tomcat-home nil
    :custom-java-version :7
@@ -262,7 +262,7 @@
   "</Server>"])
   
 (s/defn setenv-sh
-  [config :- HeapConfig]
+  [config :- JavaVmConfig]
   [(if (get-in config [:jdk6]) 
      "JAVA_HOME=/usr/lib/jvm/java-1.6.0-openjdk-amd64"
      "#JAVA_HOME=/usr/lib/jvm/java-1.6.0-openjdk-amd64")
@@ -270,14 +270,14 @@
         " -Dfile.encoding=UTF8"
         " -Dorg.apache.catalina.loader.WebappClassLoader.ENABLE_CLEAR_REFERENCES=false"
         " -Duser.timezone=GMT"
-        " -Xms" (get-in config [:Xms])
-        " -Xmx" (get-in config [:Xmx])
-        " -XX:MaxPermSize=" (get-in config [:MaxPermSize]) "\"")
+        " -Xms" (get-in config [:xms])
+        " -Xmx" (get-in config [:xmx])
+        " -XX:max-perm-size=" (get-in config [:max-perm-size]) "\"")
    ]
   )
 
 (s/defn default-tomcat7
-  [config :- HeapConfig]
+  [config :- JavaVmConfig]
   ["TOMCAT7_USER=tomcat7"
    "TOMCAT7_GROUP=tomcat7"
    (if (get-in config [:jdk6]) 
@@ -286,9 +286,9 @@
    (str "JAVA_OPTS=\"-Dfile.encoding=UTF8 -Djava.net.preferIPv4Stack=true"
         " -Dorg.apache.catalina.loader.WebappClassLoader.ENABLE_CLEAR_REFERENCES=false"
         " -Duser.timezone=GMT"
-        " -Xms" (get-in config [:Xms])
-        " -Xmx" (get-in config [:Xmx])
-        " -XX:MaxPermSize=" (get-in config [:MaxPermSize])
+        " -Xms" (get-in config [:xms])
+        " -Xmx" (get-in config [:xmx])
+        " -XX:max-perm-size=" (get-in config [:max-perm-size])
         " -XX:+UseConcMarkSweepGC\"")
    "#JAVA_OPTS=\"${JAVA_OPTS} -Xdebug -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n\""
    "TOMCAT7_SECURITY=no"

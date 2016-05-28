@@ -29,7 +29,7 @@
 (def custom-dir "/etc/pp/")
 
 (def partial-config 
-  {:CustomConfig {:with-manager-webapps false}})
+  {:custom-config {:with-manager-webapps false}})
 
 (def config
   (tomcat/merge-config partial-config))
@@ -55,10 +55,10 @@
       (is 
         (=
           false
-          (get-in (sut/tomcat-config (get-in config [:CustomConfig])) [:with-manager-webapps])))
+          (get-in (sut/tomcat-config (get-in config [:custom-config])) [:with-manager-webapps])))
       (is
         (=
-          (sut/tomcat-config (get-in config [:CustomConfig])) 
+          (sut/tomcat-config (get-in config [:custom-config])) 
           expected-config        
           )
         )
