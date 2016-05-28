@@ -21,6 +21,7 @@
      [clojure.string :as string]
      [schema.core :as s]
      [org.domaindrivenarchitecture.config.commons.map-utils :as map-utils]
+     [org.domaindrivenarchitecture.config.commons.directory-model :as dir-model]
     ))
 
 ; TODO: review jem 2016.05.28: multiple schemas indicates seperated "objects" lets either move the schema definitions & defaults into seperate ns
@@ -63,14 +64,13 @@
    :jdk6 false})
 
 (def CustomConfig
-  {:custom-tomcat-home dir-model/NonRootDirectory
+  {(s/optional-key :custom-tomcat-home) dir-model/NonRootDirectory
    :custom-java-version s/Keyword
    :with-manager-webapps s/Bool})
 
 (def default-custom-config
   ""
-  {:custom-tomcat-home nil
-   :custom-java-version :7
+  {:custom-java-version :7
    :with-manager-webapps false})
       
 

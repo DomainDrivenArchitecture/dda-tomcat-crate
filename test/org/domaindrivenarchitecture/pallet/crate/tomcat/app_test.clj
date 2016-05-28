@@ -26,13 +26,13 @@
     ))
 
 
-(def custom-dir "/etc/pp/")
-
 (def partial-config 
-  {:custom-config {:with-manager-webapps false}})
+ {:custom-config {:with-manager-webapps false}})
 
 (def config
   (tomcat/merge-config partial-config))
+
+(def custom-dir "/etc/pp/")
 
 (def expected-config
   {:webapps-root-xml "/etc/tomcat7/Catalina/localhost/ROOT.xml"

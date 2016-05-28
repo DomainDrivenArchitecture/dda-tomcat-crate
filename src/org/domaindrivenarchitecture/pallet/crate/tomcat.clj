@@ -38,7 +38,7 @@
    :custom-config app-config/CustomConfig
    })
 
-(def tomcatDefaultConfig
+(def default-tomcat-config
   "Tomcat Crate Default Configuration"
   {:home-dir "/var/lib/tomcat7/"
    :webapps-dir "/var/lib/tomcat7/webapps/"
@@ -58,4 +58,4 @@
 (s/defn ^:always-validate merge-config :- TomcatConfig
   "merges the partial config with default config & ensures that resulting config is valid."
   [partial-config]
-  (map-utils/deep-merge tomcatDefaultConfig partial-config))
+  (map-utils/deep-merge default-tomcat-config partial-config))

@@ -22,10 +22,8 @@
     [org.domaindrivenarchitecture.pallet.crate.tomcat :as sut]
     ))
 
- (deftest defaults
-  (testing 
-    "test the default config definition" 
-      (is (s/validate
-            sut/TomcatConfig
-            sut/tomcatDefaultConfig))
-      ))
+(def partial-config 
+ {:custom-config {:with-manager-webapps false}})
+
+(def config
+  (sut/merge-config partial-config))
