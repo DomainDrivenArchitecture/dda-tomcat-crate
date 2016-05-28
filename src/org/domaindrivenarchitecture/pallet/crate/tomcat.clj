@@ -27,12 +27,11 @@
     [org.domaindrivenarchitecture.pallet.crate.tomcat.app-config :as app-config]
     ))
 
+; TODO: review jem 2016.05.28: home-dir is someway redundant to custom-config. But lets keep this refactoring for future.
+; TODO: review jem 2016.05.28: TomcatConfig is no more compatible. So you have to refactor every point of usage according to new config structure. 
 (def TomcatConfig
   "The configuration for tomcat crate." 
-  {:xmx s/Str
-   :xms s/Str
-   :max-perm-size s/Str
-   :home-dir dir-model/NonRootDirectory
+  {:home-dir dir-model/NonRootDirectory
    :webapps-dir dir-model/NonRootDirectory
    :server-xml-config app-config/ServerXmlConfig
    :java-vm-config app-config/JavaVmConfig
@@ -41,10 +40,7 @@
 
 (def tomcatDefaultConfig
   "Tomcat Crate Default Configuration"
-  {:xmx "1024m"
-   :xms "256m"
-   :max-perm-size "512m"
-   :home-dir "/var/lib/tomcat7/"
+  {:home-dir "/var/lib/tomcat7/"
    :webapps-dir "/var/lib/tomcat7/webapps/"
    :server-xml-config app-config/default-server-xml-config
    :java-vm-config app-config/default-heap-config

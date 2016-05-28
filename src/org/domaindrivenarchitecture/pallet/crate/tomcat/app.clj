@@ -40,6 +40,7 @@
         \newline
         content))))
 
+; TODO: review jem 2016.05.28: this fn should stay in tomcat-ns & maybe merged with existing default config. But lets keep this refactoring for future.
 (s/defn tomcat-config
   "Provides a map with all tomcat configurations. If parameter 
 custom-home is provided, then a custom tomcat is installed. In 
@@ -141,6 +142,7 @@ other case the default ubuntu package is used."
     (remove-manager-webapps (:tomcat-home config)))
   )
 
+; TODO: review jem 2016.05.28: this fn should stay in tomcat-ns. But lets keep this refactoring for future.
 (defn install-tomcat7
   [& {:keys [custom-tomcat-home
              custom-java-version
@@ -156,6 +158,7 @@ other case the default ubuntu package is used."
       (install-tomcat7-custom config)
     )))
 
+; TODO: review jem 2016.05.28: this fn should stay in tomcat-ns. But lets keep this refactoring for future.
 (defn configure-tomcat7
   [& {:keys [custom-tomcat-home
              lines-etc-default-tomcat7 lines-server-xml lines-catalina-properties

@@ -23,6 +23,8 @@
      [org.domaindrivenarchitecture.config.commons.map-utils :as map-utils]
     ))
 
+; TODO: review jem 2016.05.28: multiple schemas indicates seperated "objects" lets either move the schema definitions & defaults into seperate ns
+; or seperate along domain objects. But lets keep this refactoring for future.
 (def ServerXmlConfig
   "The configuration needed for the server-xml file"
   {:shutdown-port s/Str
@@ -60,9 +62,8 @@
    :max-perm-size "512m"
    :jdk6 false})
 
-;TODO: This config name needs to be reviewed
 (def CustomConfig
-  {:custom-tomcat-home s/Any
+  {:custom-tomcat-home dir-model/NonRootDirectory
    :custom-java-version s/Keyword
    :with-manager-webapps s/Bool})
 
