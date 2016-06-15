@@ -25,5 +25,13 @@
 (def partial-config 
  {:custom-config {:with-manager-webapps false}})
 
-(def config
-  (sut/merge-config partial-config))
+(deftest config-test
+  (testing 
+    "test if the default config is valid"
+    (is (sut/merge-config partial-config))))
+
+(deftest server-spec
+  (testing 
+    "test the server spec" 
+      (is (map? sut/with-tomcat))
+      ))
