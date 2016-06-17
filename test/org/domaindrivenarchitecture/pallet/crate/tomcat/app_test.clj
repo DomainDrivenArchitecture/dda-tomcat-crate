@@ -55,10 +55,13 @@
       (is 
         (=
           false
-          (get-in (sut/tomcat-config (get-in config [:custom-config])) [:with-manager-webapps])))
+          (get-in (sut/tomcat-config (get-in config [:custom-config])
+                                     (get-in config [:java-vm-config])) 
+                  [:with-manager-webapps])))
       (is
         (=
-          (sut/tomcat-config (get-in config [:custom-config])) 
+          (sut/tomcat-config (get-in config [:custom-config])
+                             (get-in config [:java-vm-config])) 
           expected-config        
           )
         )

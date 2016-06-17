@@ -17,13 +17,12 @@
 (ns org.domaindrivenarchitecture.pallet.crate.tomcat 
   (:require
     [schema.core :as s]
-    [schema-tools.core :as st]
-    [pallet.actions :as actions]
     [pallet.api :as api]
+    [org.domaindrivenarchitecture.pallet.core.dda-crate :as dda-crate]
     [org.domaindrivenarchitecture.config.commons.map-utils :as map-utils]
-    [org.domaindrivenarchitecture.pallet.crate.config-0-3 :as config]
+    [org.domaindrivenarchitecture.pallet.crate.config :as config]
     [org.domaindrivenarchitecture.config.commons.directory-model :as dir-model]
-    [org.domaindrivenarchitecture.pallet.crate.tomcat.app :as tomcat-app]
+    [org.domaindrivenarchitecture.pallet.crate.tomcat.app :as app]
     [org.domaindrivenarchitecture.pallet.crate.tomcat.app-config :as app-config]
     ))
 
@@ -38,7 +37,7 @@
    :custom-config app-config/CustomConfig
    })
 
-(def default-tomcat-config
+(def default-config
   "Tomcat Crate Default Configuration"
   {:home-dir "/var/lib/tomcat7/"
    :webapps-dir "/var/lib/tomcat7/webapps/"
@@ -46,16 +45,38 @@
    :java-vm-config app-config/default-heap-config
    :custom-config app-config/default-custom-config})
 
-(def ^:dynamic with-tomcat
-  (api/server-spec
-    :phases 
-    {:install
-     (api/plan-fn
-       (tomcat-app/install-tomcat7)
-       )
-    }))
-
 (s/defn ^:always-validate merge-config :- TomcatConfig
   "merges the partial config with default config & ensures that resulting config is valid."
   [partial-config]
-  (map-utils/deep-merge default-tomcat-config partial-config))
+  (map-utils/deep-merge default-config partial-config))
+
+(s/defn install
+  "install function for httpd-crate."
+  [config :- TomcatConfig]
+  (app/install-tomcat7 config))
+
+(s/defn configure
+  "configure function for httpd-crate."
+  [config :- TomcatConfig]
+  (app/configure-tomcat7 config))
+  
+(defmethod dda-crate/dda-install 
+  :dda-tomcat [dda-crate partial-effective-config]
+  (let [config (dda-crate/merge-config dda-crate partial-effective-config)]
+    (install config)))
+
+(defmethod dda-crate/dda-configure 
+  :dda-tomcat [dda-crate partial-effective-config]
+  (let [config (dda-crate/merge-config dda-crate partial-effective-config)]
+    (configure config)))
+
+(def dda-tomcat-crate 
+  (dda-crate/make-dda-crate
+    :facility :dda-tomcat
+    :version [0 1 0]
+    :config-schema TomcatConfig
+    :config-default default-config
+    ))
+
+(def with-tomcat
+  (dda-crate/create-server-spec dda-tomcat-crate))

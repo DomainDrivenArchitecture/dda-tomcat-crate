@@ -65,13 +65,11 @@
 
 (def CustomConfig
   {(s/optional-key :custom-tomcat-home) dir-model/NonRootDirectory
-   :custom-java-version s/Keyword
    :with-manager-webapps s/Bool})
 
 (def default-custom-config
   ""
-  {:custom-java-version :7
-   :with-manager-webapps false})
+  {:with-manager-webapps false})
       
 
 (def var-lib-tomcat7-webapps-ROOT-META-INF-context-xml
