@@ -15,7 +15,8 @@
               [[com.palletops/pallet "0.8.12" :classifier "tests"]
                ]
               :plugins
-              [[com.palletops/pallet-lein "0.8.0-alpha.1"]]}
+              [[com.palletops/pallet-lein "0.8.0-alpha.1"]
+               [lein-sub "0.3.0"]]}
               :leiningen/reply
                {:dependencies [[org.slf4j/jcl-over-slf4j "1.7.21"]]
                 :exclusions [commons-logging]}}
