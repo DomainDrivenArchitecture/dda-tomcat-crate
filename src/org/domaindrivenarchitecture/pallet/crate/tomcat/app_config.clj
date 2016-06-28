@@ -29,6 +29,7 @@
 (def ServerXmlConfig
   "The configuration needed for the server-xml file"
   {:shutdown-port s/Str
+   ; TODO: review jem 2016.06.28: conflicts with protocol. If ajp is set, then ajp protocol is used. same to http.
    (s/optional-key :ajp-port) s/Any
    (s/optional-key :http-port) s/Str
    :service-name s/Str
