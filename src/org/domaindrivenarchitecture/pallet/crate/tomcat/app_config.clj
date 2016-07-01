@@ -21,23 +21,8 @@
      [clojure.string :as string]
      [schema.core :as s]
      [org.domaindrivenarchitecture.config.commons.map-utils :as map-utils]
-     [org.domaindrivenarchitecture.config.commons.directory-model :as dir-model]
+     [org.domaindrivenarchitecture.pallet.crate.tomcat.schema :as schema]
     ))
-
-; TODO: review jem 2016.05.28: multiple schemas indicates seperated "objects" lets either move the schema definitions & defaults into seperate ns
-; or seperate along domain objects. But lets keep this refactoring for future.
-(def ServerXmlConfig
-  "The configuration needed for the server-xml file"
-  {:shutdown-port s/Str
-   ; TODO: review jem 2016.06.28: conflicts with protocol. If ajp is set, then ajp protocol is used. same to http.
-   (s/optional-key :ajp-port) s/Any
-   (s/optional-key :http-port) s/Str
-   :service-name s/Str
-   :protocol s/Str
-   :executorMaxThreads s/Str
-   :connectorMaxThreads s/Str
-   :connectionTimeout s/Str
-   })
 
 (def default-server-xml-config
   "The default configuration needed for the server-xml file"
@@ -49,14 +34,6 @@
    :connectionTimeout "61000"
    })
 
-(def JavaVmConfig
-  "The configuration of the heap settings"
-  {:xms s/Str
-   :xmx s/Str
-   :max-perm-size s/Str
-   :jdk6 s/Bool}
-  )
-
 (def default-heap-config
   "The default configuration of the heap settings"
   {:xms "1536m"
@@ -64,14 +41,8 @@
    :max-perm-size "512m"
    :jdk6 false})
 
-(def CustomConfig
-  {(s/optional-key :custom-tomcat-home) dir-model/NonRootDirectory
-   :with-manager-webapps s/Bool})
-
 (def default-custom-config
-  ""
   {:with-manager-webapps false})
-      
 
 (def var-lib-tomcat7-webapps-ROOT-META-INF-context-xml
   ["<Context path=\"/\"" 
@@ -112,7 +83,7 @@
 
 (s/defn server-xml
   "the server-xml generator function."
-  [config :- ServerXmlConfig]
+  [config :- schema/ServerXmlConfig]
   ["<?xml version='1.0' encoding='utf-8'?>"
   "<!--"
   " Licensed to the Apache Software Foundation (ASF) under one or more"
@@ -262,7 +233,7 @@
   "</Server>"])
   
 (s/defn setenv-sh
-  [config :- JavaVmConfig]
+  [config :- schema/JavaVmConfig]
   [(if (get-in config [:jdk6]) 
      "JAVA_HOME=/usr/lib/jvm/java-1.6.0-openjdk-amd64"
      "#JAVA_HOME=/usr/lib/jvm/java-1.6.0-openjdk-amd64")
@@ -277,7 +248,7 @@
   )
 
 (s/defn default-tomcat7
-  [config :- JavaVmConfig]
+  [config :- schema/JavaVmConfig]
   ["TOMCAT7_USER=tomcat7"
    "TOMCAT7_GROUP=tomcat7"
    (if (get-in config [:jdk6]) 

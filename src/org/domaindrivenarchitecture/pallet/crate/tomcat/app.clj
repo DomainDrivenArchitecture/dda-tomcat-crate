@@ -16,14 +16,15 @@
 
 (ns org.domaindrivenarchitecture.pallet.crate.tomcat.app
    (:require
+     [schema.core :as s]
      [clojure.string :as string]
      [pallet.actions :as actions]
      [pallet.stevedore :as stevedore]
+     [org.domaindrivenarchitecture.pallet.crate.tomcat.schema :as schema]
      [org.domaindrivenarchitecture.pallet.crate.tomcat.app-config :as config]
-     [schema.core :as s]
     ))
 
-(defn- write-tomcat-file
+(defn write-tomcat-file
   "Create and upload a config file"
   [file-name & {:keys [content executable?]
                 :or {executable? false}}]
@@ -40,41 +41,12 @@
         \newline
         content))))
 
-; TODO: review jem 2016.05.28: this fn should stay in tomcat-ns & maybe merged with existing default config. But lets keep this refactoring for future.
-(s/defn tomcat-config
-  "Provides a map with all tomcat configurations. If parameter 
-custom-home is provided, then a custom tomcat is installed. In 
-other case the default ubuntu package is used."
-  [custom-config :- config/CustomConfig
-   java-config :- config/JavaVmConfig]
-  (let [os-package (empty? (get-in custom-config [:custom-tomcat-home]))
-        tomcat-home (if os-package "/var/lib/tomcat7" (get-in custom-config [:custom-tomcat-home]))
-        config-base (if os-package "/etc/tomcat7" (str (get-in custom-config [:custom-tomcat-home]) "/conf"))
-        custom-tomcat-bin (if os-package "/usr/share/tomcat7/bin" (str tomcat-home "/bin"))]
-  {:os-package os-package
-   :tomcat-home tomcat-home
-   :config-default "/etc/default/tomcat7"
-   :config-base config-base
-   :config-server-xml (str config-base "/server.xml")
-   :config-catalina-properties (str config-base "/catalina.properties")
-   :config-setenv-sh (str custom-tomcat-bin "/setenv.sh")
-   :custom-bin custom-tomcat-bin
-   :webapps (str tomcat-home "/webapps")
-   :webapps-root-xml (str config-base "/Catalina/localhost/ROOT.xml")
-   :java-package (cond
-                   (get-in java-config [:jdk6]) "openjdk-6-jdk"
-                   :else "openjdk-7-jdk")
-   :download-url "http://apache.openmirror.de/tomcat/tomcat-7/v7.0.68/bin/apache-tomcat-7.0.68.tar.gz"
-   :with-manager-webapps (get-in custom-config [:with-manager-webapps]) 
-   }))
-
-(defn- make-tomcat-executable
-  [custom-tomcat-home]
+(s/defn make-tomcat-executable
+  [config :- schema/TomcatConfig]
   (doseq [file ["catalina.sh" "configtest.sh" "daemon.sh" "digest.sh"
                 "setclasspath.sh" "shutdown.sh" "startup.sh" "tool-wrapper.sh"]]
-    (let [file-path (str 
-                      (:custom-bin (tomcat-config :custom-tomcat-home custom-tomcat-home)) 
-                      "/" file)]
+    (let [file-path 
+          (str (get-in config [:custom-bin-location]) "/" file)]
       (actions/file
         file-path
         :action :touch
@@ -82,9 +54,9 @@ other case the default ubuntu package is used."
       ))
   )
 
-(defn- remove-manager-webapps
-  [custom-tomcat-home]  
-  (let [webapps (:webapps (tomcat-config :custom-tomcat-home custom-tomcat-home))]
+(s/defn remove-manager-webapps
+  [config  :- schema/TomcatConfig]  
+  (let [webapps (get-in config [:webapps-location])]
   (doseq [dir ["docs" "examples" "host-manager" "manager" "ROOT"]]
     (let [dir-path (str webapps "/" dir)]
       (actions/directory
@@ -127,60 +99,49 @@ other case the default ubuntu package is used."
       config/var-lib-tomcat7-webapps-ROOT-META-INF-context-xml))
   ))
 
-(defn- install-tomcat7-custom
-  [config]
+(s/defn install-tomcat7-custom
+  [config :- schema/TomcatConfig]
   (actions/remote-directory
-    (:tomcat-home config)
+    (get-in config [:tomcat-home])
     :action :create
-    :url (:download-url config)
+    :url (get-in config [:download-url])
     :strip-components 1      ;Note: strip-component only works with tar, not with unzip
     :unpack :tar
     :owner "tomcat7"
     :group "tomcat7"
     :mode "755")
-  (make-tomcat-executable (:tomcat-home config))
-  (if (not (:with-manager-webapps config))
-    (remove-manager-webapps (:tomcat-home config)))
+  (make-tomcat-executable config))
+
+(s/defn install-tomcat7
+  [config :- schema/TomcatConfig]
+  (actions/package "unzip")
+  (actions/package (get-in config [:java-package]))
+  (if (get-in config [:os-package])
+    (actions/package "tomcat7")
+    (install-tomcat7-custom config))
+  (when (not (get-in config [:with-manager-webapps]))
+    (remove-manager-webapps (get-in config [:tomcat-home])))
   )
 
-(defn install-tomcat7
-  [config]
-  (let [tomcat-config (tomcat-config 
-                        (get-in config [:java-vm-config])
-                        (get-in config [:custom-config]))]
-    (actions/package (:java-package tomcat-config))
-    (actions/package "unzip")
-    (if (:os-package tomcat-config)
-      (actions/package "tomcat7")
-      (install-tomcat7-custom tomcat-config)
-    )))
-
-(defn configure-tomcat7
-  [config]
-  (let [tomcat-config (tomcat-config 
-                        (get-in config [:java-vm-config])
-                        (get-in config [:custom-config]))
-        lines-etc-default-tomcat7 (config/default-tomcat7)
-        lines-catalina-properties nil
-        lines-ROOT-xml nil
-        lines-setenv-sh (config/setenv-sh)
-        lines-server-xml (config/server-xml (get-in config [:server-xml-config]))]
-    
+(s/defn configure-tomcat7
+  [config :- schema/TomcatConfig]
+  (write-tomcat-file
+    (get-in config [:config-server-xml-location])
+    :content (config/server-xml (get-in config [:server-xml-config])))
+  (when (contains? config :catalina-properties-lines)
     (write-tomcat-file
-      (:config-server-xml tomcat-config)
-      :content lines-server-xml) 
+      (get-in config [:config-catalina-properties-location])
+      :content (get-in config [:catalina-properties-lines])))
+  (when (contains? config :root-xml-lines)
     (write-tomcat-file
-      (:config-catalina-properties tomcat-config)
-      :content lines-catalina-properties)
+      (get-in config [:webapps-root-xml-location])
+      :content (get-in config [:root-xml-lines])))
+  (if (get-in config [:os-package]) 
     (write-tomcat-file
-      (:webapps-root-xml tomcat-config)
-      :content lines-ROOT-xml)
-    (if (:os-package config) ;TODO: this is a problem: consider a liferay on native tomcat and a d2rq in a tomcat-bundle on the same machine --> os-package is true, and every tomcat7 instance acts like it. however, it should be true for the liferay tomcat only
-       (write-tomcat-file
-         (:config-default tomcat-config)
-         :content lines-etc-default-tomcat7)      
-      (write-tomcat-file
-        (:config-setenv-sh tomcat-config)
-        :content lines-setenv-sh
-        :executable? true))
-  ))
+      (get-in config [:config-default-location])
+      :content (get-in config [:default-lines]))      
+    (write-tomcat-file
+      (get-in config [:config-setenv-sh-location])
+      :content (get-in config [:setenv-sh-lines])
+      :executable? true))
+  )

@@ -25,13 +25,60 @@
 (def partial-config 
  {:custom-config {:with-manager-webapps false}})
 
+(def expected-config
+  {:webapps-root-xml-location "/etc/tomcat7/Catalina/localhost/ROOT.xml"
+   :os-package true
+   :tomcat-home-location "/var/lib/tomcat7/"
+   :config-base-location "/etc/tomcat7/"
+   :webapps-location "/var/lib/tomcat7/webapps/"
+   :config-catalina-properties-location "/etc/tomcat7/catalina.properties"
+   :config-default-location "/etc/default/tomcat7"
+   :config-server-xml-location "/etc/tomcat7/server.xml"
+   :custom-bin-location "/usr/share/tomcat7/bin/"
+   :config-setenv-sh-location "/usr/share/tomcat7/bin/setenv.sh"
+   :java-package "openjdk-7-jdk"
+   :download-url
+   "http://apache.openmirror.de/tomcat/tomcat-7/v7.0.68/bin/apache-tomcat-7.0.68.tar.gz",
+   :custom-config {:with-manager-webapps false},
+   :server-xml-config {:shutdown-port "8005",
+                       :service-name "Catalina",
+                       :protocol "AJP/1.3",
+                       :executorMaxThreads "161",
+                       :connectorMaxThreads "151",
+                       :connectionTimeout "61000"}
+   :java-vm-config {:xms "1536m",
+                    :xmx "2560m",
+                    :max-perm-size "512m",
+                    :jdk6 false},
+   :default-lines ["TOMCAT7_USER=tomcat7"
+                   "TOMCAT7_GROUP=tomcat7"
+                   "#JAVA_HOME=/usr/lib/jvm/java-1.6.0-openjdk-amd64"
+                   "JAVA_OPTS=\"-Dfile.encoding=UTF8 -Djava.net.preferIPv4Stack=true -Dorg.apache.catalina.loader.WebappClassLoader.ENABLE_CLEAR_REFERENCES=false -Duser.timezone=GMT -Xms1536m -Xmx2560m -XX:max-perm-size=512m -XX:+UseConcMarkSweepGC\""
+                   "#JAVA_OPTS=\"${JAVA_OPTS} -Xdebug -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n\""
+                   "TOMCAT7_SECURITY=no"
+                   "#AUTHBIND=no"],
+   :setenv-sh-lines ["#JAVA_HOME=/usr/lib/jvm/java-1.6.0-openjdk-amd64"
+                     "JAVA_OPTS=\"$JAVA_OPTS -Dfile.encoding=UTF8 -Dorg.apache.catalina.loader.WebappClassLoader.ENABLE_CLEAR_REFERENCES=false -Duser.timezone=GMT -Xms1536m -Xmx2560m -XX:max-perm-size=512m\""],
+   })
+
 (deftest config-test
   (testing 
     "test if the default config is valid"
     (is (sut/merge-config partial-config))))
 
+(deftest tomcat-config-test
+  (testing
+    (is (=
+          false
+          (get-in (sut/merge-config partial-config)
+                  [:custom-config :with-manager-webapps])))
+    (is (=
+          (sut/merge-config partial-config) 
+          expected-config))
+    ))
+
 (deftest server-spec
   (testing 
     "test the server spec" 
-      (is (map? sut/with-tomcat))
+      (is sut/with-tomcat)
       ))
