@@ -41,11 +41,11 @@
    "http://apache.openmirror.de/tomcat/tomcat-7/v7.0.68/bin/apache-tomcat-7.0.68.tar.gz",
    :custom-config {:with-manager-webapps false},
    :server-xml-config {:shutdown-port "8005",
+                       :executor-max-threads "151",
                        :service-name "Catalina",
-                       :protocol "AJP/1.3",
-                       :executorMaxThreads "161",
-                       :connectorMaxThreads "151",
-                       :connectionTimeout "61000"}
+                       :connector-port "8080",
+                       :connector-protocol "HTTP/1.1",
+                       :connection-timeout "61000"}
    :java-vm-config {:xms "1536m",
                     :xmx "2560m",
                     :max-perm-size "512m",
@@ -58,7 +58,7 @@
                    "TOMCAT7_SECURITY=no"
                    "#AUTHBIND=no"],
    :setenv-sh-lines ["#JAVA_HOME=/usr/lib/jvm/java-1.6.0-openjdk-amd64"
-                     "JAVA_OPTS=\"$JAVA_OPTS -Dfile.encoding=UTF8 -Dorg.apache.catalina.loader.WebappClassLoader.ENABLE_CLEAR_REFERENCES=false -Duser.timezone=GMT -Xms1536m -Xmx2560m -XX:max-perm-size=512m\""],
+                     "JAVA_OPTS=\"$JAVA_OPTS -server -Dfile.encoding=UTF8 -Dorg.apache.catalina.loader.WebappClassLoader.ENABLE_CLEAR_REFERENCES=false -Duser.timezone=GMT -Xms1536m -Xmx2560m -XX:MaxPermSize=512m\""],
    })
 
 (deftest config-test
@@ -73,8 +73,8 @@
           (get-in (sut/merge-config partial-config)
                   [:custom-config :with-manager-webapps])))
     (is (=
-          (sut/merge-config partial-config) 
-          expected-config))
+          expected-config
+          (sut/merge-config partial-config)))
     ))
 
 (deftest server-spec

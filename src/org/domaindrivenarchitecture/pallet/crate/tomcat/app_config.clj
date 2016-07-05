@@ -27,11 +27,11 @@
 (def default-server-xml-config
   "The default configuration needed for the server-xml file"
   {:shutdown-port "8005"
+   :executor-max-threads "151"
    :service-name "Catalina"
-   :protocol "AJP/1.3"
-   :executorMaxThreads "161"
-   :connectorMaxThreads "151"
-   :connectionTimeout "61000"
+   :connector-port "8080"
+   :connector-protocol "HTTP/1.1"
+   :connection-timeout "61000"
    })
 
 (def default-heap-config
@@ -105,7 +105,7 @@
   "     define subcomponents such as \"Valves\" at this level."
   "     Documentation at /docs/config/server.html"
   "-->"
-  (str "<Server port=\"" (get-in config :shutdown-port) "\" shutdown=\"SHUTDOWN\">")
+  (str "<Server port=\"" (get-in config [:shutdown-port]) "\" shutdown=\"SHUTDOWN\">")
   "  <!-- Security listener. Documentation at /docs/config/listeners.html"
   "  <Listener className=\"org.apache.catalina.security.SecurityListener\" />"
   "  -->"
@@ -139,48 +139,18 @@
   "       so you may not define subcomponents such as \"Valves\" at this level."
   "       Documentation at /docs/config/service.html"
   "   -->"
-  (str "  <Service name=\"" (get-in config :service-name) "\">")
+  (str "  <Service name=\"" (get-in config [:service-name]) "\">")
   ""
   "    <!--The connectors can use a shared executor, you can define one or more named thread pools-->"
-  "    <!--"
   "    <Executor name=\"tomcatThreadPool\" namePrefix=\"catalina-exec-\""
-  (str "        maxThreads=\"" (get-in config :executorMaxThreads) "\" minSpareThreads=\"4\"/>")
-  "    -->"
+  (str "        maxThreads=\"" (get-in config [:executor-max-threads]) "\" minSpareThreads=\"4\"/>")
   ""
-  ""
-  "    <!-- A \"Connector\" represents an endpoint by which requests are received"
-  "         and responses are returned. Documentation at :"
-  "         Java HTTP Connector: /docs/config/http.html (blocking & non-blocking)"
-  "         Java AJP  Connector: /docs/config/ajp.html"
-  "         APR (HTTP/AJP) Connector: /docs/apr.html"
-  "         Define a non-SSL HTTP/1.1 Connector on port 8080"
-  "    -->"
-  (str "    <Connector port=\"" (get-in config :http-port) "\" protocol=\"" (get-in config :protocol) "\"")
-  (str "               connectionTimeout=\"" (get-in config :connectionTimeout) "\"")
-  "               URIEncoding=\"UTF-8\""
-  "               redirectPort=\"8443\" />"
-  "    <!-- A \"Connector\" using the shared thread pool-->"
-  "    <!--"
-  (str "    <Connector executor=\"" (get-in config :executor) "\"")
-  (str "               port=\"" (get-in config :http-port) "\" protocol=\"" (get-in config :protocol) "\"")
-  (str "               connectionTimeout=\"" (get-in config :connectionTimeout) "\"")
-  "               redirectPort=\"8443\" />"
-  "    -->"
-  "    <!-- Define a SSL HTTP/1.1 Connector on port 8443"
-  "         This connector uses the JSSE configuration, when using APR, the"
-  "         connector should be using the OpenSSL style configuration"
-  "         described in the APR documentation -->"
-  "    <!--"
-  "    <Connector port=\"8443\" protocol=\"HTTP/1.1\" SSLEnabled=\"true\""
-  "               maxThreads=\"150\" scheme=\"https\" secure=\"true\""
-  "               clientAuth=\"false\" sslProtocol=\"TLS\" />"
-  "    -->"
-  ""
-  "    <!-- Define an AJP 1.3 Connector on port 8009 -->"
-  "    <!--"
-  "    <Connector port=\"8009\" protocol=\"AJP/1.3\" redirectPort=\"8443\" />"
-  "    -->"
-  ""
+  (str "    <Connector executor=\"tomcatThreadPool\" "
+       "port=\"" (get-in config [:connector-port]) "\" "
+       "protocol=\"" (get-in config [:connector-protocol]) "\"")
+  (str "               "
+       "connectionTimeout=\"" (get-in config [:connection-timeout]) "\" "
+       "URIEncoding=\"UTF-8\" />")
   ""
   "    <!-- An Engine represents the entry point (within Catalina) that processes"
   "         every request.  The Engine implementation for Tomcat stand alone"
@@ -238,12 +208,13 @@
      "JAVA_HOME=/usr/lib/jvm/java-1.6.0-openjdk-amd64"
      "#JAVA_HOME=/usr/lib/jvm/java-1.6.0-openjdk-amd64")
    (str "JAVA_OPTS=\"$JAVA_OPTS"
+        " -server"
         " -Dfile.encoding=UTF8"
         " -Dorg.apache.catalina.loader.WebappClassLoader.ENABLE_CLEAR_REFERENCES=false"
         " -Duser.timezone=GMT"
         " -Xms" (get-in config [:xms])
         " -Xmx" (get-in config [:xmx])
-        " -XX:max-perm-size=" (get-in config [:max-perm-size]) "\"")
+        " -XX:MaxPermSize=" (get-in config [:max-perm-size]) "\"")
    ]
   )
 

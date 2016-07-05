@@ -23,15 +23,11 @@
 (def ServerXmlConfig
   "The configuration needed for the server-xml file"
   {:shutdown-port s/Str
-   ; TODO: review jem 2016.06.28: conflicts with protocol. If ajp is set, then ajp protocol is used. same to http.
-   (s/optional-key :ajp-port) s/Any
-   (s/optional-key :http-port) s/Str
+   :executor-max-threads s/Str
    :service-name s/Str
-   :protocol s/Str
-   :executorMaxThreads s/Str
-   :connectorMaxThreads s/Str
-   :connectionTimeout s/Str
-   })
+   :connector-port s/Str
+   :connector-protocol (s/pred #(contains? #{"HTTP/1.1" "AJP/1.3"} %)) 
+   :connection-timeout s/Str})
 
 (def JavaVmConfig
   "The configuration of the heap settings"
