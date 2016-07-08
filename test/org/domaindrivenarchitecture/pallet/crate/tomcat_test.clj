@@ -41,6 +41,9 @@
    "http://apache.openmirror.de/tomcat/tomcat-7/v7.0.68/bin/apache-tomcat-7.0.68.tar.gz",
    :custom-config {:with-manager-webapps false},
    :server-xml-config {:shutdown-port "8005",
+                       :executor-daemon "true",
+                       :start-ssl false,
+                       :executor-min-spare-threads "4"
                        :executor-max-threads "151",
                        :service-name "Catalina",
                        :connector-port "8080",

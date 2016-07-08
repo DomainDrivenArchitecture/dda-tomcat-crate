@@ -23,7 +23,10 @@
 (def ServerXmlConfig
   "The configuration needed for the server-xml file"
   {:shutdown-port s/Str
+   :start-ssl s/Bool
+   :executor-daemon s/Str
    :executor-max-threads s/Str
+   :executor-min-spare-threads s/Str
    :service-name s/Str
    :connector-port s/Str
    :connector-protocol (s/pred #(contains? #{"HTTP/1.1" "AJP/1.3"} %)) 
