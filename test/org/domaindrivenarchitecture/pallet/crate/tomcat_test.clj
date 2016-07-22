@@ -56,7 +56,7 @@
    :default-lines ["TOMCAT7_USER=tomcat7"
                    "TOMCAT7_GROUP=tomcat7"
                    "#JAVA_HOME=/usr/lib/jvm/java-1.6.0-openjdk-amd64"
-                   "JAVA_OPTS=\"-Dfile.encoding=UTF8 -Djava.net.preferIPv4Stack=true -Dorg.apache.catalina.loader.WebappClassLoader.ENABLE_CLEAR_REFERENCES=false -Duser.timezone=GMT -Xms1536m -Xmx2560m -XX:max-perm-size=512m -XX:+UseConcMarkSweepGC\""
+                   "JAVA_OPTS=\"-Dfile.encoding=UTF8 -Djava.net.preferIPv4Stack=true -Dorg.apache.catalina.loader.WebappClassLoader.ENABLE_CLEAR_REFERENCES=false -Duser.timezone=GMT -Xms1536m -Xmx2560m -XX:MaxPermSize=512m -XX:+UseConcMarkSweepGC\""
                    "#JAVA_OPTS=\"${JAVA_OPTS} -Xdebug -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n\""
                    "TOMCAT7_SECURITY=no"
                    "#AUTHBIND=no"],

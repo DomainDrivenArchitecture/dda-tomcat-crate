@@ -124,7 +124,7 @@
       ""
       "    <Engine name=\"Catalina\" defaultHost=\"localhost\">"
       ""
-      "      <Realm className=\"org.apache.catalina.realm.LockOutRealm\">" 
+      "      <Realm className=\"org.apache.catalina.realm.LockOutRealm\"/>" 
       "      <Realm className=\"org.apache.catalina.realm.UserDatabaseRealm\""
       "             resourceName=\"UserDatabase\"/>"
       ""
@@ -169,7 +169,7 @@
         " -Duser.timezone=GMT"
         " -Xms" (get-in config [:xms])
         " -Xmx" (get-in config [:xmx])
-        " -XX:max-perm-size=" (get-in config [:max-perm-size])
+        " -XX:MaxPermSize=" (get-in config [:max-perm-size])
         " -XX:+UseConcMarkSweepGC\"")
    "#JAVA_OPTS=\"${JAVA_OPTS} -Xdebug -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n\""
    "TOMCAT7_SECURITY=no"

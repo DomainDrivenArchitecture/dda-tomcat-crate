@@ -44,7 +44,7 @@
     ""
     "    <Engine name=\"Catalina\" defaultHost=\"localhost\">"
     ""
-    "      <Realm className=\"org.apache.catalina.realm.LockOutRealm\">"
+    "      <Realm className=\"org.apache.catalina.realm.LockOutRealm\"/>"
     "      <Realm className=\"org.apache.catalina.realm.UserDatabaseRealm\""
     "             resourceName=\"UserDatabase\"/>"
     ""
