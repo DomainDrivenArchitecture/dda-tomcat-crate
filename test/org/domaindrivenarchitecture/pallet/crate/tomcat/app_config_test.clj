@@ -38,7 +38,8 @@
    :service-name "Catalina"
    :connector-port "8080"
    :connector-protocol "HTTP/1.1"
-   :connection-timeout "20000"})
+   :connection-timeout "20000"
+   :uri-encoding "UTF-8"})
   
 (def expected-server-xml-lines
   ["<?xml version='1.0' encoding='utf-8'?>"

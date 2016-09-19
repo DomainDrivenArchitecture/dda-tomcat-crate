@@ -35,6 +35,7 @@
    :connector-port "8080"
    :connector-protocol "HTTP/1.1"
    :connection-timeout "61000"
+   :uri-encoding "UTF-8"
    })
 
 (def default-heap-config
@@ -120,7 +121,7 @@
            "protocol=\"" (get-in config [:connector-protocol]) "\"")
       (str "               "
            "connectionTimeout=\"" (get-in config [:connection-timeout]) "\" "
-           "URIEncoding=\"UTF-8\" />")
+           "URIEncoding=\"" (-> config :uri-encoding) "\" />")
       ""
       "    <Engine name=\"Catalina\" defaultHost=\"localhost\">"
       ""

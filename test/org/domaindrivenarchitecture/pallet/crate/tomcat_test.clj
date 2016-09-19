@@ -48,7 +48,8 @@
                        :service-name "Catalina",
                        :connector-port "8080",
                        :connector-protocol "HTTP/1.1",
-                       :connection-timeout "61000"}
+                       :connection-timeout "61000"
+                       :uri-encoding "UTF-8"}
    :java-vm-config {:xms "1536m",
                     :xmx "2560m",
                     :max-perm-size "512m",

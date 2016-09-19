@@ -15,7 +15,8 @@
    :service-name "Catalina"
    :connector-port "8009"
    :connector-protocol "AJP/1.3"
-   :connection-timeout "20000"})
+   :connection-timeout "20000"
+   :uri-encoding "UTF-8"})
 
 (def expected-server-xml-lines-case-ajp
   ["<?xml version='1.0' encoding='utf-8'?>"

@@ -30,7 +30,8 @@
    :service-name s/Str
    :connector-port s/Str
    :connector-protocol (s/pred #(contains? #{"HTTP/1.1" "AJP/1.3"} %)) 
-   :connection-timeout s/Str})
+   :connection-timeout s/Str
+   (s/optional-key :uri-encoding) s/Str})
 
 (def JavaVmConfig
   "The configuration of the heap settings"
