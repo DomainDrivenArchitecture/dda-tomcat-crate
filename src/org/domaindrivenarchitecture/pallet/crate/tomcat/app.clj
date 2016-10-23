@@ -102,7 +102,7 @@
 (s/defn install-tomcat7-custom
   [config :- schema/TomcatConfig]
   (actions/remote-directory
-    (get-in config [:tomcat-home])
+    (get-in config [:tomcat-home-location])
     :action :create
     :url (get-in config [:download-url])
     :strip-components 1      ;Note: strip-component only works with tar, not with unzip
@@ -120,7 +120,7 @@
     (actions/package "tomcat7")
     (install-tomcat7-custom config))
   (when (not (get-in config [:with-manager-webapps]))
-    (remove-manager-webapps (get-in config [:tomcat-home])))
+    (remove-manager-webapps (get-in config [:tomcat-home-location])))
   )
 
 (s/defn configure-tomcat7
