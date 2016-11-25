@@ -9,7 +9,7 @@
                  [com.palletops/pallet "0.8.12"]
                  [com.palletops/stevedore "0.8.0-beta.7"]
                  [org.domaindrivenarchitecture/dda-config-commons "0.1.6"]
-                 [org.domaindrivenarchitecture/dda-pallet "0.1.1"]]
+                 [org.domaindrivenarchitecture/dda-pallet "0.2.0-SNAPSHOT"]]
   :profiles {:dev
              {:dependencies
               [[com.palletops/pallet "0.8.12" :classifier "tests"]
