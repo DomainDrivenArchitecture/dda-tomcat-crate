@@ -1,4 +1,4 @@
-(defproject org.domaindrivenarchitecture/dda-tomcat-crate "0.1.5-SNAPSHOT"
+(defproject org.domaindrivenarchitecture/dda-tomcat-crate "0.1.6-SNAPSHOT"
   :description "The dda tomcat crate"
   :url "https://www.domaindrivenarchitecture.org"
   :pallet {:source-paths ["src"]}
@@ -8,8 +8,8 @@
                  [prismatic/schema "1.1.3"]
                  [com.palletops/pallet "0.8.12"]
                  [com.palletops/stevedore "0.8.0-beta.7"]
-                 [org.domaindrivenarchitecture/dda-config-commons "0.1.6"]
-                 [org.domaindrivenarchitecture/dda-pallet "0.2.0-SNAPSHOT"]]
+                 [org.domaindrivenarchitecture/dda-config-commons "0.1.7"]
+                 [org.domaindrivenarchitecture/dda-pallet "0.2.0"]]
   :profiles {:dev
              {:dependencies
               [[com.palletops/pallet "0.8.12" :classifier "tests"]
