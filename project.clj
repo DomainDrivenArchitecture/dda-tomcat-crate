@@ -9,7 +9,7 @@
                  [com.palletops/pallet "0.8.12"]
                  [com.palletops/stevedore "0.8.0-beta.7"]
                  [org.domaindrivenarchitecture/dda-config-commons "0.1.7"]
-                 [org.domaindrivenarchitecture/dda-pallet "0.2.0"]]
+                 [org.domaindrivenarchitecture/dda-pallet "0.3.0"]]
   :profiles {:dev
              {:dependencies
               [[com.palletops/pallet "0.8.12" :classifier "tests"]
@@ -18,7 +18,7 @@
               [[com.palletops/pallet-lein "0.8.0-alpha.1"]
                [lein-sub "0.3.0"]]}
               :leiningen/reply
-               {:dependencies [[org.slf4j/jcl-over-slf4j "1.7.21"]]
+               {:dependencies [[org.slf4j/jcl-over-slf4j "1.7.22"]]
                 :exclusions [commons-logging]}}
    :local-repo-classpath true
    :repositories [["snapshots" :clojars]
