@@ -29,7 +29,7 @@
    :executor-min-spare-threads s/Str
    :service-name s/Str
    :connector-port s/Str
-   :connector-protocol (s/pred #(contains? #{"HTTP/1.1" "AJP/1.3"} %)) 
+   :connector-protocol (s/pred #(contains? #{"HTTP/1.1" "AJP/1.3"} %))
    :connection-timeout s/Str
    (s/optional-key :uri-encoding) s/Str})
 
@@ -38,7 +38,7 @@
   {:xms s/Str
    :xmx s/Str
    :max-perm-size s/Str
-   :jdk6 s/Bool}
+   :jdk s/Str}
   )
 
 (def CustomConfig
@@ -46,7 +46,7 @@
    :with-manager-webapps s/Bool})
 
 (def TomcatConfig
-  "The configuration for tomcat crate." 
+  "The configuration for tomcat crate."
   {:server-xml-config ServerXmlConfig
    :java-vm-config JavaVmConfig
    :custom-config CustomConfig

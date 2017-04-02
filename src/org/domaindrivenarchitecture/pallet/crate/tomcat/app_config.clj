@@ -43,13 +43,13 @@
   {:xms "1536m"
    :xmx "2560m"
    :max-perm-size "512m"
-   :jdk6 false})
+   :jdk "8"})
 
 (def default-custom-config
   {:with-manager-webapps false})
 
 (def var-lib-tomcat7-webapps-ROOT-META-INF-context-xml
-  ["<Context path=\"/\"" 
+  ["<Context path=\"/\""
    "antiResourceLocking=\"false\" />"])
 
 (def var-lib-tomcat7-webapps-ROOT-index-html
@@ -82,15 +82,15 @@
    ""
    "</body>"
    "</html>"
-   ]  
+   ]
   )
 
 (s/defn server-xml
   "the server-xml generator function."
   [config :- schema/ServerXmlConfig]
-  (into 
+  (into
     []
-    (concat      
+    (concat
       ["<?xml version='1.0' encoding='utf-8'?>"
       (str "<Server port=\"" (get-in config [:shutdown-port]) "\" shutdown=\"SHUTDOWN\">")]
       (when (get-in config [:start-ssl])
@@ -125,7 +125,7 @@
       ""
       "    <Engine name=\"Catalina\" defaultHost=\"localhost\">"
       ""
-      "      <Realm className=\"org.apache.catalina.realm.LockOutRealm\"/>" 
+      "      <Realm className=\"org.apache.catalina.realm.LockOutRealm\"/>"
       "      <Realm className=\"org.apache.catalina.realm.UserDatabaseRealm\""
       "             resourceName=\"UserDatabase\"/>"
       ""
@@ -141,10 +141,10 @@
       "  </Service>"
       "</Server>"]))
   )
-  
+
 (s/defn setenv-sh
   [config :- schema/JavaVmConfig]
-  [(if (get-in config [:jdk6]) 
+  [(if (= (get-in config [:jdk]) "6")
      "JAVA_HOME=/usr/lib/jvm/java-1.6.0-openjdk-amd64"
      "#JAVA_HOME=/usr/lib/jvm/java-1.6.0-openjdk-amd64")
    (str "JAVA_OPTS=\"$JAVA_OPTS"
@@ -162,7 +162,7 @@
   [config :- schema/JavaVmConfig]
   ["TOMCAT7_USER=tomcat7"
    "TOMCAT7_GROUP=tomcat7"
-   (if (get-in config [:jdk6]) 
+   (if (= (get-in config [:jdk]) "6")
      "JAVA_HOME=/usr/lib/jvm/java-1.6.0-openjdk-amd64"
      "#JAVA_HOME=/usr/lib/jvm/java-1.6.0-openjdk-amd64")
    (str "JAVA_OPTS=\"-Dfile.encoding=UTF8 -Djava.net.preferIPv4Stack=true"
