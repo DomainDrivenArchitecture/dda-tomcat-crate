@@ -16,14 +16,13 @@
 
 (ns org.domaindrivenarchitecture.pallet.crate.tomcat
   (:require
-    [schema.core :as s]
-    [pallet.api :as api]
-    [org.domaindrivenarchitecture.pallet.core.dda-crate :as dda-crate]
-    [org.domaindrivenarchitecture.config.commons.map-utils :as map-utils]
-    [org.domaindrivenarchitecture.pallet.crate.tomcat.schema :as schema]
-    [org.domaindrivenarchitecture.pallet.crate.tomcat.app :as app]
-    [org.domaindrivenarchitecture.pallet.crate.tomcat.app-config :as app-config]
-    ))
+   [schema.core :as s]
+   [pallet.api :as api]
+   [org.domaindrivenarchitecture.pallet.core.dda-crate :as dda-crate]
+   [org.domaindrivenarchitecture.config.commons.map-utils :as map-utils]
+   [org.domaindrivenarchitecture.pallet.crate.tomcat.schema :as schema]
+   [org.domaindrivenarchitecture.pallet.crate.tomcat.app :as app]
+   [org.domaindrivenarchitecture.pallet.crate.tomcat.app-config :as app-config]))
 
 (def TomcatConfig
   schema/TomcatConfig)
@@ -35,7 +34,6 @@
    :custom-config app-config/default-custom-config
    :default-lines (app-config/default-tomcat7 app-config/default-heap-config)
    :setenv-sh-lines (app-config/setenv-sh app-config/default-heap-config)})
-
 
 (s/defn tomcat-defaults
   "Provides a map with all tomcat configurations. If parameter
@@ -53,34 +51,34 @@ other case the default ubuntu package is used."
         custom-tomcat-bin (if os-package
                             "/usr/share/tomcat7/bin/"
                             (str tomcat-home "bin/"))]
-  {:os-package os-package
-   :tomcat-home-location tomcat-home
-   :config-base-location config-base
-   :webapps-location (str tomcat-home "webapps/")
-   :custom-bin-location custom-tomcat-bin
-   :config-default-location "/etc/default/tomcat7"
-   :config-server-xml-location (str config-base "server.xml")
-   :config-catalina-properties-location (str config-base "catalina.properties")
-   :config-setenv-sh-location (str custom-tomcat-bin "setenv.sh")
-   :webapps-root-xml-location (str config-base "Catalina/localhost/ROOT.xml")
-   :java-package (if (= (get-in java-vm-config [:jdk]) "7")
-                   "openjdk-7-jdk"
-                   "openjdk-8-jdk")
-   :download-url "http://apache.openmirror.de/tomcat/tomcat-7/v7.0.68/bin/apache-tomcat-7.0.68.tar.gz"
-   }))
+    {:os-package os-package
+     :tomcat-home-location tomcat-home
+     :config-base-location config-base
+     :webapps-location (str tomcat-home "webapps/")
+     :custom-bin-location custom-tomcat-bin
+     :config-default-location "/etc/default/tomcat7"
+     :config-server-xml-location (str config-base "server.xml")
+     :config-catalina-properties-location (str config-base "catalina.properties")
+     :config-setenv-sh-location (str custom-tomcat-bin "setenv.sh")
+     :webapps-root-xml-location (str config-base "Catalina/localhost/ROOT.xml")
+     :java-package (let [jdk (get-in java-vm-config [:jdk])]
+                     (cond
+                       (= jdk "6")  "openjdk-6-jdk"
+                       (= jdk "7")  "openjdk-7-jdk"
+                       (= jdk "8") "openjdk-8-jdk"))
+     :download-url "http://apache.openmirror.de/tomcat/tomcat-7/v7.0.68/bin/apache-tomcat-7.0.68.tar.gz"}))
 
 (s/defn ^:always-validate merge-config :- TomcatConfig
   "merges the partial config with default config & ensures that resulting config is valid."
   [partial-config]
   (let [config (map-utils/deep-merge
-                 default-config
-                 partial-config)]
+                default-config
+                partial-config)]
     (map-utils/deep-merge
-      (tomcat-defaults
-        (get-in config [:java-vm-config])
-        (get-in config [:custom-config]))
-      config)
-    ))
+     (tomcat-defaults
+      (get-in config [:java-vm-config])
+      (get-in config [:custom-config]))
+     config)))
 
 (s/defn install
   "install function for httpd-crate."
@@ -104,11 +102,10 @@ other case the default ubuntu package is used."
 
 (def dda-tomcat-crate
   (dda-crate/make-dda-crate
-    :facility :dda-tomcat
-    :version [0 1 0]
-    :config-schema TomcatConfig
-    :config-default default-config
-    ))
+   :facility :dda-tomcat
+   :version [0 1 0]
+   :config-schema TomcatConfig
+   :config-default default-config))
 
 (def with-tomcat
   (dda-crate/create-server-spec dda-tomcat-crate))
