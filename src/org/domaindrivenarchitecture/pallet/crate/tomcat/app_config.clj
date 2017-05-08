@@ -144,9 +144,12 @@
 
 (s/defn setenv-sh
   [config :- schema/JavaVmConfig]
-  [(if (= (get-in config [:jdk]) "6")
-     "JAVA_HOME=/usr/lib/jvm/java-1.6.0-openjdk-amd64"
-     "#JAVA_HOME=/usr/lib/jvm/java-1.6.0-openjdk-amd64")
+  [(let [jdk (get-in config [:jdk])]
+                  (cond
+                    (= jdk "6")  "JAVA_HOME=/usr/lib/jvm/java-1.6.0-openjdk-amd64"
+                    (= jdk "7")  "JAVA_HOME=/usr/lib/jvm/java-1.7.0-openjdk-amd64"
+                    (= jdk "8") "JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-amd64")
+)
    (str "JAVA_OPTS=\"$JAVA_OPTS"
         " -server"
         " -Dfile.encoding=UTF8"
@@ -162,9 +165,12 @@
   [config :- schema/JavaVmConfig]
   ["TOMCAT7_USER=tomcat7"
    "TOMCAT7_GROUP=tomcat7"
-   (if (= (get-in config [:jdk]) "6")
-     "JAVA_HOME=/usr/lib/jvm/java-1.6.0-openjdk-amd64"
-     "#JAVA_HOME=/usr/lib/jvm/java-1.6.0-openjdk-amd64")
+   (let [jdk (get-in config [:jdk])]
+                   (cond
+                     (= jdk "6")  "JAVA_HOME=/usr/lib/jvm/java-1.6.0-openjdk-amd64"
+                     (= jdk "7")  "JAVA_HOME=/usr/lib/jvm/java-1.7.0-openjdk-amd64"
+                     (= jdk "8") "JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-amd64")
+ )
    (str "JAVA_OPTS=\"-Dfile.encoding=UTF8 -Djava.net.preferIPv4Stack=true"
         " -Dorg.apache.catalina.loader.WebappClassLoader.ENABLE_CLEAR_REFERENCES=false"
         " -Duser.timezone=GMT"

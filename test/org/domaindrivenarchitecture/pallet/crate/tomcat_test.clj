@@ -22,7 +22,7 @@
     [org.domaindrivenarchitecture.pallet.crate.tomcat :as sut]
     ))
 
-(def partial-config 
+(def partial-config
  {:custom-config {:with-manager-webapps false}})
 
 (def expected-config
@@ -36,7 +36,7 @@
    :config-server-xml-location "/etc/tomcat7/server.xml"
    :custom-bin-location "/usr/share/tomcat7/bin/"
    :config-setenv-sh-location "/usr/share/tomcat7/bin/setenv.sh"
-   :java-package "openjdk-7-jdk"
+   :java-package "openjdk-8-jdk"
    :download-url
    "http://apache.openmirror.de/tomcat/tomcat-7/v7.0.68/bin/apache-tomcat-7.0.68.tar.gz",
    :custom-config {:with-manager-webapps false},
@@ -53,20 +53,20 @@
    :java-vm-config {:xms "1536m",
                     :xmx "2560m",
                     :max-perm-size "512m",
-                    :jdk6 false},
+                    :jdk "8"},
    :default-lines ["TOMCAT7_USER=tomcat7"
                    "TOMCAT7_GROUP=tomcat7"
-                   "#JAVA_HOME=/usr/lib/jvm/java-1.6.0-openjdk-amd64"
+                   "JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-amd64"
                    "JAVA_OPTS=\"-Dfile.encoding=UTF8 -Djava.net.preferIPv4Stack=true -Dorg.apache.catalina.loader.WebappClassLoader.ENABLE_CLEAR_REFERENCES=false -Duser.timezone=GMT -Xms1536m -Xmx2560m -XX:MaxPermSize=512m -XX:+UseConcMarkSweepGC\""
                    "#JAVA_OPTS=\"${JAVA_OPTS} -Xdebug -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n\""
                    "TOMCAT7_SECURITY=no"
                    "#AUTHBIND=no"],
-   :setenv-sh-lines ["#JAVA_HOME=/usr/lib/jvm/java-1.6.0-openjdk-amd64"
+   :setenv-sh-lines ["JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-amd64"
                      "JAVA_OPTS=\"$JAVA_OPTS -server -Dfile.encoding=UTF8 -Dorg.apache.catalina.loader.WebappClassLoader.ENABLE_CLEAR_REFERENCES=false -Duser.timezone=GMT -Xms1536m -Xmx2560m -XX:MaxPermSize=512m\""],
    })
 
 (deftest config-test
-  (testing 
+  (testing
     "test if the default config is valid"
     (is (sut/merge-config partial-config))))
 
@@ -82,7 +82,7 @@
     ))
 
 (deftest server-spec
-  (testing 
-    "test the server spec" 
+  (testing
+    "test the server spec"
       (is sut/with-tomcat)
       ))

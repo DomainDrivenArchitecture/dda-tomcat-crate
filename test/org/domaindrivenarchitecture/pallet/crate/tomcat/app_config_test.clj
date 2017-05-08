@@ -10,18 +10,18 @@
   {:xms "1m"
    :xmx "2m"
    :max-perm-size "3m"
-   :jdk6 false})
+   :jdk "7"})
 
 
 (def expected-setenv-sh-lines
-  ["#JAVA_HOME=/usr/lib/jvm/java-1.6.0-openjdk-amd64"
+  ["JAVA_HOME=/usr/lib/jvm/java-1.7.0-openjdk-amd64"
    (str "JAVA_OPTS=\"$JAVA_OPTS -server -Dfile.encoding=UTF8"
         " -Dorg.apache.catalina.loader.WebappClassLoader.ENABLE_CLEAR_REFERENCES=false"
         " -Duser.timezone=GMT -Xms1m -Xmx2m -XX:MaxPermSize=3m\"")])
 
 (deftest test-setenv-sh
   (testing
-    (is 
+    (is
       (s/validate schema/JavaVmConfig setenv-sh-config))
     (is
       (= expected-setenv-sh-lines
@@ -40,7 +40,7 @@
    :connector-protocol "HTTP/1.1"
    :connection-timeout "20000"
    :uri-encoding "UTF-8"})
-  
+
 (def expected-server-xml-lines
   ["<?xml version='1.0' encoding='utf-8'?>"
   "<Server port=\"8005\" shutdown=\"SHUTDOWN\">"
@@ -82,10 +82,10 @@
   "    </Engine>"
   "  </Service>"
   "</Server>"])
-  
+
 (deftest test-server-xml
   (testing
-    (is 
+    (is
       (s/validate schema/ServerXmlConfig server-xml-config))
     (is
       (= expected-server-xml-lines
