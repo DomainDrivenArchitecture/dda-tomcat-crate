@@ -13,7 +13,7 @@
   :profiles {:dev
              {:dependencies
               [[com.palletops/pallet "0.8.12" :classifier "tests"]
-               [proto-repl "0.3.1"]]
+               ]
               :plugins
               [[com.palletops/pallet-lein "0.8.0-alpha.1"]
                [lein-sub "0.3.0"]]}
