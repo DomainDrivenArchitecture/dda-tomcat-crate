@@ -1,10 +1,12 @@
 
 # tomcat-crate and liferay-crate
+[![Clojars Project](https://img.shields.io/clojars/v/dda/dda-tomcat-crate.svg)](https://clojars.org/dda/dda-tomcat-crate)
+[![Build Status](https://travis-ci.org/DomainDrivenArchitecture/dda-tomcat-crate.svg?branch=master)](https://travis-ci.org/DomainDrivenArchitecture/dda-tomcat-crate)
 
 ## Compatibility
 The crates run and work on
  * pallet 0.8
- * ubuntu 14.04
+ * ubuntu 16.04
 
 ## Functionality and interaction
 
