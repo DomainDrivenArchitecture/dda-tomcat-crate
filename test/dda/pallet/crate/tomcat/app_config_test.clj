@@ -1,9 +1,9 @@
-(ns org.domaindrivenarchitecture.pallet.crate.tomcat.app-config-test
+(ns dda.pallet.crate.tomcat.app-config-test
   (:require
     [clojure.test :refer :all]
     [schema.core :as s]
-    [org.domaindrivenarchitecture.pallet.crate.tomcat.schema :as schema]
-    [org.domaindrivenarchitecture.pallet.crate.tomcat.app-config :as sut]
+    [dda.pallet.crate.tomcat.schema :as schema]
+    [dda.pallet.crate.tomcat.app-config :as sut]
    ))
 
 (def setenv-sh-config

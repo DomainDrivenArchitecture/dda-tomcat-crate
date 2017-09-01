@@ -14,10 +14,10 @@
 ; See the License for the specific language governing permissions and
 ; limitations under the License.
 
-(ns org.domaindrivenarchitecture.pallet.crate.tomcat.schema
+(ns dda.pallet.crate.tomcat.schema
   (:require
     [schema.core :as s]
-    [org.domaindrivenarchitecture.config.commons.directory-model :as dir-model]
+    [dda.config.commons.directory-model :as dir-model]
     ))
 
 (def ServerXmlConfig

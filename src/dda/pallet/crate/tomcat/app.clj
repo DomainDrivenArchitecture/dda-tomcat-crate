@@ -14,14 +14,14 @@
 ; See the License for the specific language governing permissions and
 ; limitations under the License.
 
-(ns org.domaindrivenarchitecture.pallet.crate.tomcat.app
+(ns dda.pallet.crate.tomcat.app
    (:require
      [schema.core :as s]
      [clojure.string :as string]
      [pallet.actions :as actions]
      [pallet.stevedore :as stevedore]
-     [org.domaindrivenarchitecture.pallet.crate.tomcat.schema :as schema]
-     [org.domaindrivenarchitecture.pallet.crate.tomcat.app-config :as config]
+     [dda.pallet.crate.tomcat.schema :as schema]
+     [dda.pallet.crate.tomcat.app-config :as config]
     ))
 
 (defn write-tomcat-file

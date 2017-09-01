@@ -14,12 +14,12 @@
 ; See the License for the specific language governing permissions and
 ; limitations under the License.
 
-(ns org.domaindrivenarchitecture.pallet.crate.tomcat-test
+(ns dda.pallet.crate.tomcat-test
   (:require
     [schema.core :as s]
     [schema-tools.core :as st]
     [clojure.test :refer :all]
-    [org.domaindrivenarchitecture.pallet.crate.tomcat :as sut]
+    [dda.pallet.crate.tomcat :as sut]
     ))
 
 (def partial-config 
