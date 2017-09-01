@@ -1,9 +1,9 @@
-(ns dda.pallet.crate.tomcat.liferay-app-config-test
+(ns dda.pallet.dda-tomcat-crate.infra.liferay-app-config-test
   (:require
     [clojure.test :refer :all]
     [schema.core :as s]
-    [dda.pallet.crate.tomcat.schema :as schema]
-    [dda.pallet.crate.tomcat.app-config :as sut]
+    [dda.pallet.dda-tomcat-crate.infra.schema :as schema]
+    [dda.pallet.dda-tomcat-crate.infra.app-config :as sut]
    ))
 
 (def server-xml-config-case-ajp

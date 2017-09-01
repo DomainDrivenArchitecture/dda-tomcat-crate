@@ -14,15 +14,15 @@
 ; See the License for the specific language governing permissions and
 ; limitations under the License.
 
-(ns dda.pallet.crate.tomcat-test
+(ns dda.pallet.dda-tomcat-crate.infra-test
   (:require
     [schema.core :as s]
     [schema-tools.core :as st]
     [clojure.test :refer :all]
-    [dda.pallet.crate.tomcat :as sut]
-    ))
+    [dda.pallet.dda-tomcat-crate.infra :as sut]))
 
-(def partial-config 
+
+(def partial-config
  {:custom-config {:with-manager-webapps false}})
 
 (def expected-config
@@ -62,11 +62,11 @@
                    "TOMCAT7_SECURITY=no"
                    "#AUTHBIND=no"],
    :setenv-sh-lines ["#JAVA_HOME=/usr/lib/jvm/java-1.6.0-openjdk-amd64"
-                     "JAVA_OPTS=\"$JAVA_OPTS -server -Dfile.encoding=UTF8 -Dorg.apache.catalina.loader.WebappClassLoader.ENABLE_CLEAR_REFERENCES=false -Duser.timezone=GMT -Xms1536m -Xmx2560m -XX:MaxPermSize=512m\""],
-   })
+                     "JAVA_OPTS=\"$JAVA_OPTS -server -Dfile.encoding=UTF8 -Dorg.apache.catalina.loader.WebappClassLoader.ENABLE_CLEAR_REFERENCES=false -Duser.timezone=GMT -Xms1536m -Xmx2560m -XX:MaxPermSize=512m\""],})
+
 
 (deftest config-test
-  (testing 
+  (testing
     "test if the default config is valid"
     (is (sut/merge-config partial-config))))
 
@@ -78,11 +78,10 @@
                   [:custom-config :with-manager-webapps])))
     (is (=
           expected-config
-          (sut/merge-config partial-config)))
-    ))
+          (sut/merge-config partial-config)))))
+
 
 (deftest server-spec
-  (testing 
-    "test the server spec" 
-      (is sut/with-tomcat)
-      ))
+  (testing
+    "test the server spec"
+      (is sut/with-tomcat)))

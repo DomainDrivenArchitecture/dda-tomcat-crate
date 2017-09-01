@@ -15,13 +15,13 @@
 ; limitations under the License.
 
 
-(ns dda.pallet.crate.tomcat.app-config
+(ns dda.pallet.dda-tomcat-crate.infra.app-config
    (:require
      [pallet.actions :as actions]
      [clojure.string :as string]
      [schema.core :as s]
      [dda.config.commons.map-utils :as map-utils]
-     [dda.pallet.crate.tomcat.schema :as schema]
+     [dda.pallet.dda-tomcat-crate.infra.schema :as schema]
     ))
 
 (def default-server-xml-config

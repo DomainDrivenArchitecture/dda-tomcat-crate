@@ -14,7 +14,7 @@
 ; See the License for the specific language governing permissions and
 ; limitations under the License.
 
-(ns dda.pallet.crate.tomcat.schema
+(ns dda.pallet.dda-tomcat-crate.infra.schema
   (:require
     [schema.core :as s]
     [dda.config.commons.directory-model :as dir-model]

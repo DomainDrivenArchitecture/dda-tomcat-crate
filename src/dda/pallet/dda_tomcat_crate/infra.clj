@@ -14,15 +14,15 @@
 ; See the License for the specific language governing permissions and
 ; limitations under the License.
 
-(ns dda.pallet.crate.tomcat
+(ns dda.pallet.dda-tomcat-crate.infra
   (:require
     [schema.core :as s]
     [pallet.api :as api]
     [dda.pallet.core.dda-crate :as dda-crate]
     [dda.config.commons.map-utils :as map-utils]
-    [dda.pallet.crate.tomcat.schema :as schema]
-    [dda.pallet.crate.tomcat.app :as app]
-    [dda.pallet.crate.tomcat.app-config :as app-config]))
+    [dda.pallet.dda-tomcat-crate.infra.schema :as schema]
+    [dda.pallet.dda-tomcat-crate.infra.app :as app]
+    [dda.pallet.dda-tomcat-crate.infra.app-config :as app-config]))
 
 
 (def TomcatConfig
