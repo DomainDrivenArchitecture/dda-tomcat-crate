@@ -21,8 +21,8 @@
      [pallet.actions :as actions]
      [pallet.stevedore :as stevedore]
      [dda.pallet.dda-tomcat-crate.infra.schema :as schema]
-     [dda.pallet.dda-tomcat-crate.infra.app-config :as config]
-    ))
+     [dda.pallet.dda-tomcat-crate.infra.app-config :as config]))
+
 
 (defn write-tomcat-file
   "Create and upload a config file"
@@ -36,7 +36,7 @@
       :mode (if executable? "755" "644")
       :overwrite-changes true
       :literal true
-      :content 
+      :content
       (string/join
         \newline
         content))))
@@ -45,59 +45,56 @@
   [config :- schema/TomcatConfig]
   (doseq [file ["catalina.sh" "configtest.sh" "daemon.sh" "digest.sh"
                 "setclasspath.sh" "shutdown.sh" "startup.sh" "tool-wrapper.sh"]]
-    (let [file-path 
+    (let [file-path
           (str (get-in config [:custom-bin-location]) "/" file)]
       (actions/file
         file-path
         :action :touch
-        :mode 755)
-      ))
-  )
+        :mode 755))))
 
 (s/defn remove-manager-webapps
-  [config  :- schema/TomcatConfig]  
+  [config  :- schema/TomcatConfig]
   (let [webapps (get-in config [:webapps-location])]
-  (doseq [dir ["docs" "examples" "host-manager" "manager" "ROOT"]]
-    (let [dir-path (str webapps "/" dir)]
-      (actions/directory
-        dir-path
-        :action :delete)
-      ))
-  (actions/directory
-    (str webapps "/ROOT")
-    :action :create
-    :owner "tomcat7"  ;assumes existing tomcat7 user
-    :group "tomcat7"
-    :mode "755"
-    )
-  (actions/directory
-    (str webapps "/ROOT/META-INF")
-    :action :create
-    :owner "tomcat7"
-    :group "tomcat7"
-    :mode "755"
-    )
-  (actions/remote-file
-    (str webapps "/ROOT/index.html")
-    :owner "tomcat7"
-    :group "tomcat7"
-    :mode "755"
-    :literal true
-    :content 
-    (string/join
-      \newline
-      config/var-lib-tomcat7-webapps-ROOT-index-html))
-  (actions/remote-file
-    (str webapps "/ROOT/META-INF/context.xml")
-    :owner "tomcat7"
-    :group "tomcat7"
-    :mode "755"
-    :literal true
-    :content 
-    (string/join
-      \newline
-      config/var-lib-tomcat7-webapps-ROOT-META-INF-context-xml))
-  ))
+   (doseq [dir ["docs" "examples" "host-manager" "manager" "ROOT"]]
+     (let [dir-path (str webapps "/" dir)]
+       (actions/directory
+         dir-path
+         :action :delete)))
+
+   (actions/directory
+     (str webapps "/ROOT")
+     :action :create
+     :owner "tomcat7"  ;assumes existing tomcat7 user
+     :group "tomcat7"
+     :mode "755")
+
+   (actions/directory
+     (str webapps "/ROOT/META-INF")
+     :action :create
+     :owner "tomcat7"
+     :group "tomcat7"
+     :mode "755")
+
+   (actions/remote-file
+     (str webapps "/ROOT/index.html")
+     :owner "tomcat7"
+     :group "tomcat7"
+     :mode "755"
+     :literal true
+     :content
+     (string/join
+       \newline
+       config/var-lib-tomcat7-webapps-ROOT-index-html))
+   (actions/remote-file
+     (str webapps "/ROOT/META-INF/context.xml")
+     :owner "tomcat7"
+     :group "tomcat7"
+     :mode "755"
+     :literal true
+     :content
+     (string/join
+       \newline
+       config/var-lib-tomcat7-webapps-ROOT-META-INF-context-xml))))
 
 (s/defn install-tomcat7-custom
   [config :- schema/TomcatConfig]
@@ -120,8 +117,8 @@
     (actions/package "tomcat7")
     (install-tomcat7-custom config))
   (when (not (get-in config [:with-manager-webapps]))
-    (remove-manager-webapps (get-in config [:tomcat-home-location])))
-  )
+    (remove-manager-webapps (get-in config [:tomcat-home-location]))))
+
 
 (s/defn configure-tomcat7
   [config :- schema/TomcatConfig]
@@ -136,12 +133,11 @@
     (write-tomcat-file
       (get-in config [:webapps-root-xml-location])
       :content (get-in config [:root-xml-lines])))
-  (if (get-in config [:os-package]) 
+  (if (get-in config [:os-package])
     (write-tomcat-file
       (get-in config [:config-default-location])
-      :content (get-in config [:default-lines]))      
+      :content (get-in config [:default-lines]))
     (write-tomcat-file
       (get-in config [:config-setenv-sh-location])
       :content (get-in config [:setenv-sh-lines])
-      :executable? true))
-  )
+      :executable? true)))
