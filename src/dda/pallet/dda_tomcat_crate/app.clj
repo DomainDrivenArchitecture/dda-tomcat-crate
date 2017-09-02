@@ -24,6 +24,8 @@
 
 (def InfraResult infra/InfraResult)
 
+(def DomainConfig domain/DomainConfig)
+
 (def AppConfig
   {:group-specific-config
    {s/Keyword InfraResult}})
