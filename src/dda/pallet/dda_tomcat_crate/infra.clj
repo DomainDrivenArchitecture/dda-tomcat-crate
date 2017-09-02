@@ -18,6 +18,7 @@
   (:require
     [schema.core :as s]
     [pallet.api :as api]
+    [pallet.actions :as actions]
     [dda.pallet.core.dda-crate :as dda-crate]
     [dda.config.commons.map-utils :as map-utils]
     [dda.pallet.dda-tomcat-crate.infra.schema :as schema]
@@ -57,6 +58,15 @@
   "configure function for httpd-crate."
   [config :- TomcatConfig]
   (app/configure-tomcat7 (merge-with-internal-config config)))
+
+(s/defn  ^:always-validate init
+  "init package management"
+  [config :- TomcatConfig]
+  (actions/package-manager :update))
+
+(defmethod dda-crate/dda-init
+  facility [dda-crate config]
+  (init config))
 
 (defmethod dda-crate/dda-install
   facility [dda-crate config]
