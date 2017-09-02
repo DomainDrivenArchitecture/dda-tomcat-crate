@@ -8,6 +8,10 @@
                  [com.palletops/pallet "0.8.12"]
                  [com.palletops/stevedore "0.8.0-beta.7"]
                  [dda/dda-pallet "0.5.4-SNAPSHOT"]]
+  :repositories [["snapshots" :clojars]
+                 ["releases" :clojars]]
+  :deploy-repositories [["snapshots" :clojars]
+                        ["releases" :clojars]]
   :profiles {:dev
              {:source-paths ["integration"]
               :resource-paths ["dev-resources"]

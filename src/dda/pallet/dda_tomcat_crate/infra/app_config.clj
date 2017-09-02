@@ -21,35 +21,10 @@
      [clojure.string :as string]
      [schema.core :as s]
      [dda.config.commons.map-utils :as map-utils]
-     [dda.pallet.dda-tomcat-crate.infra.schema :as schema]
-    ))
-
-(def default-server-xml-config
-  "The default configuration needed for the server-xml file"
-  {:shutdown-port "8005"
-   :start-ssl false
-   :executor-daemon "true"
-   :executor-min-spare-threads "4"
-   :executor-max-threads "151"
-   :service-name "Catalina"
-   :connector-port "8080"
-   :connector-protocol "HTTP/1.1"
-   :connection-timeout "61000"
-   :uri-encoding "UTF-8"
-   })
-
-(def default-heap-config
-  "The default configuration of the heap settings"
-  {:xms "1536m"
-   :xmx "2560m"
-   :max-perm-size "512m"
-   :jdk6 false})
-
-(def default-custom-config
-  {:with-manager-webapps false})
-
+     [dda.pallet.dda-tomcat-crate.infra.schema :as schema]))
+    
 (def var-lib-tomcat7-webapps-ROOT-META-INF-context-xml
-  ["<Context path=\"/\"" 
+  ["<Context path=\"/\""
    "antiResourceLocking=\"false\" />"])
 
 (def var-lib-tomcat7-webapps-ROOT-index-html
@@ -81,70 +56,70 @@
    "<p>NOTE: For security reasons, using the manager webapp is restricted to users with role \"manager-gui\". The host-manager webapp is restricted to users with role \"admin-gui\". Users are defined in <code>/etc/tomcat7/tomcat-users.xml</code>.</p>"
    ""
    "</body>"
-   "</html>"
-   ]  
-  )
+   "</html>"])
+
+
 
 (s/defn server-xml
   "the server-xml generator function."
   [config :- schema/ServerXmlConfig]
-  (into 
+  (into
     []
-    (concat      
+    (concat
       ["<?xml version='1.0' encoding='utf-8'?>"
-      (str "<Server port=\"" (get-in config [:shutdown-port]) "\" shutdown=\"SHUTDOWN\">")]
+       (str "<Server port=\"" (get-in config [:shutdown-port]) "\" shutdown=\"SHUTDOWN\">")]
       (when (get-in config [:start-ssl])
           ["  <Listener className=\"org.apache.catalina.core.AprLifecycleListener\" SSLEngine=\"on\" />"])
       ["  <Listener className=\"org.apache.catalina.core.JasperListener\" />"
-      "  <Listener className=\"org.apache.catalina.core.JreMemoryLeakPreventionListener\" />"
-      "  <Listener className=\"org.apache.catalina.mbeans.GlobalResourcesLifecycleListener\" />"
-      "  <Listener className=\"org.apache.catalina.core.ThreadLocalLeakPreventionListener\" />"
-      ""
-      "  <GlobalNamingResources>"
-      "    <Resource name=\"UserDatabase\" auth=\"Container\""
-      "              type=\"org.apache.catalina.UserDatabase\""
-      "              description=\"User database that can be updated and saved\""
-      "              factory=\"org.apache.catalina.users.MemoryUserDatabaseFactory\""
-      "              pathname=\"conf/tomcat-users.xml\" />"
-      "  </GlobalNamingResources>"
-      ""
-      (str "  <Service name=\"" (get-in config [:service-name]) "\">")
-      ""
-      "    <Executor name=\"tomcatThreadPool\" namePrefix=\"catalina-exec-\""
-      (str "       "
-           " daemon=\"" (get-in config [:executor-daemon]) "\""
-           " maxThreads=\"" (get-in config [:executor-max-threads]) "\""
-           " minSpareThreads=\"" (get-in config [:executor-min-spare-threads]) "\"/>")
-      ""
-      (str "    <Connector executor=\"tomcatThreadPool\" "
-           "port=\"" (get-in config [:connector-port]) "\" "
-           "protocol=\"" (get-in config [:connector-protocol]) "\"")
-      (str "               "
-           "connectionTimeout=\"" (get-in config [:connection-timeout]) "\" "
-           "URIEncoding=\"" (-> config :uri-encoding) "\" />")
-      ""
-      "    <Engine name=\"Catalina\" defaultHost=\"localhost\">"
-      ""
-      "      <Realm className=\"org.apache.catalina.realm.LockOutRealm\"/>" 
-      "      <Realm className=\"org.apache.catalina.realm.UserDatabaseRealm\""
-      "             resourceName=\"UserDatabase\"/>"
-      ""
-      "      <Host name=\"localhost\"  appBase=\"webapps\""
-      "            unpackWARs=\"true\" autoDeploy=\"true\">"
-      ""
-      "      <Valve className=\"org.apache.catalina.valves.AccessLogValve\" directory=\"logs\""
-      "            pattern=\"%h %l %u %t &quot;%r&quot; %s %b %D %S\""
-      "            prefix=\"localhost_access_log.\" suffix=\".txt\""
-      "            resolveHosts=\"false\"/>"
-      "      </Host>"
-      "    </Engine>"
-      "  </Service>"
-      "</Server>"]))
-  )
-  
+       "  <Listener className=\"org.apache.catalina.core.JreMemoryLeakPreventionListener\" />"
+       "  <Listener className=\"org.apache.catalina.mbeans.GlobalResourcesLifecycleListener\" />"
+       "  <Listener className=\"org.apache.catalina.core.ThreadLocalLeakPreventionListener\" />"
+       ""
+       "  <GlobalNamingResources>"
+       "    <Resource name=\"UserDatabase\" auth=\"Container\""
+       "              type=\"org.apache.catalina.UserDatabase\""
+       "              description=\"User database that can be updated and saved\""
+       "              factory=\"org.apache.catalina.users.MemoryUserDatabaseFactory\""
+       "              pathname=\"conf/tomcat-users.xml\" />"
+       "  </GlobalNamingResources>"
+       ""
+       (str "  <Service name=\"" (get-in config [:service-name]) "\">")
+       ""
+       "    <Executor name=\"tomcatThreadPool\" namePrefix=\"catalina-exec-\""
+       (str "       "
+            " daemon=\"" (get-in config [:executor-daemon]) "\""
+            " maxThreads=\"" (get-in config [:executor-max-threads]) "\""
+            " minSpareThreads=\"" (get-in config [:executor-min-spare-threads]) "\"/>")
+       ""
+       (str "    <Connector executor=\"tomcatThreadPool\" "
+            "port=\"" (get-in config [:connector-port]) "\" "
+            "protocol=\"" (get-in config [:connector-protocol]) "\"")
+       (str "               "
+            "connectionTimeout=\"" (get-in config [:connection-timeout]) "\" "
+            "URIEncoding=\"" (-> config :uri-encoding) "\" />")
+       ""
+       "    <Engine name=\"Catalina\" defaultHost=\"localhost\">"
+       ""
+       "      <Realm className=\"org.apache.catalina.realm.LockOutRealm\"/>"
+       "      <Realm className=\"org.apache.catalina.realm.UserDatabaseRealm\""
+       "             resourceName=\"UserDatabase\"/>"
+       ""
+       "      <Host name=\"localhost\"  appBase=\"webapps\""
+       "            unpackWARs=\"true\" autoDeploy=\"true\">"
+       ""
+       "      <Valve className=\"org.apache.catalina.valves.AccessLogValve\" directory=\"logs\""
+       "            pattern=\"%h %l %u %t &quot;%r&quot; %s %b %D %S\""
+       "            prefix=\"localhost_access_log.\" suffix=\".txt\""
+       "            resolveHosts=\"false\"/>"
+       "      </Host>"
+       "    </Engine>"
+       "  </Service>"
+       "</Server>"])))
+
+
 (s/defn setenv-sh
   [config :- schema/JavaVmConfig]
-  [(if (get-in config [:jdk6]) 
+  [(if (get-in config [:jdk6])
      "JAVA_HOME=/usr/lib/jvm/java-1.6.0-openjdk-amd64"
      "#JAVA_HOME=/usr/lib/jvm/java-1.6.0-openjdk-amd64")
    (str "JAVA_OPTS=\"$JAVA_OPTS"
@@ -154,15 +129,15 @@
         " -Duser.timezone=GMT"
         " -Xms" (get-in config [:xms])
         " -Xmx" (get-in config [:xmx])
-        " -XX:MaxPermSize=" (get-in config [:max-perm-size]) "\"")
-   ]
-  )
+        " -XX:MaxPermSize=" (get-in config [:max-perm-size]) "\"")])
+
+
 
 (s/defn default-tomcat7
   [config :- schema/JavaVmConfig]
   ["TOMCAT7_USER=tomcat7"
    "TOMCAT7_GROUP=tomcat7"
-   (if (get-in config [:jdk6]) 
+   (if (get-in config [:jdk6])
      "JAVA_HOME=/usr/lib/jvm/java-1.6.0-openjdk-amd64"
      "#JAVA_HOME=/usr/lib/jvm/java-1.6.0-openjdk-amd64")
    (str "JAVA_OPTS=\"-Dfile.encoding=UTF8 -Djava.net.preferIPv4Stack=true"
@@ -174,5 +149,4 @@
         " -XX:+UseConcMarkSweepGC\"")
    "#JAVA_OPTS=\"${JAVA_OPTS} -Xdebug -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n\""
    "TOMCAT7_SECURITY=no"
-   "#AUTHBIND=no"]
-)
+   "#AUTHBIND=no"])

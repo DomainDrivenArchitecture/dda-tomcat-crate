@@ -17,8 +17,8 @@
 (ns dda.pallet.dda-tomcat-crate.infra.schema
   (:require
     [schema.core :as s]
-    [dda.config.commons.directory-model :as dir-model]
-    ))
+    [dda.config.commons.directory-model :as dir-model]))
+
 
 (def ServerXmlConfig
   "The configuration needed for the server-xml file"
@@ -29,7 +29,7 @@
    :executor-min-spare-threads s/Str
    :service-name s/Str
    :connector-port s/Str
-   :connector-protocol (s/pred #(contains? #{"HTTP/1.1" "AJP/1.3"} %)) 
+   :connector-protocol (s/pred #(contains? #{"HTTP/1.1" "AJP/1.3"} %))
    :connection-timeout s/Str
    (s/optional-key :uri-encoding) s/Str})
 
@@ -38,15 +38,15 @@
   {:xms s/Str
    :xmx s/Str
    :max-perm-size s/Str
-   :jdk6 s/Bool}
-  )
+   :jdk6 s/Bool})
+
 
 (def CustomConfig
   {(s/optional-key :custom-tomcat-home) dir-model/NonRootDirectory
    :with-manager-webapps s/Bool})
 
 (def TomcatConfig
-  "The configuration for tomcat crate." 
+  "The configuration for tomcat crate."
   {:server-xml-config ServerXmlConfig
    :java-vm-config JavaVmConfig
    :custom-config CustomConfig
@@ -61,9 +61,13 @@
    :config-catalina-properties-location s/Str
    :webapps-root-xml-location s/Str
    :java-package s/Str
-   :download-url s/Str
-   :default-lines [s/Str]
-   :setenv-sh-lines [s/Str]
-   (s/optional-key :catalina-properties-lines) [s/Str]
-   (s/optional-key :root-xml-lines) [s/Str]
-   })
+   :download-url s/Str})
+
+(def TomcatInternalConfig
+  "The configuration for tomcat crate."
+  (merge
+    TomcatConfig
+    {:default-lines [s/Str]
+     :setenv-sh-lines [s/Str]
+     (s/optional-key :catalina-properties-lines) [s/Str]
+     (s/optional-key :root-xml-lines) [s/Str]}))
