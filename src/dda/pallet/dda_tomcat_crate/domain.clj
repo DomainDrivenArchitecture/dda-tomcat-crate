@@ -46,7 +46,7 @@
   :jdk6 false})
 
 (def default-custom-config
- {:remove-manager-webapps false})
+ {:remove-manager-webapps true})
 
 (s/defn ^:always-validate infra-configuration :- infra/InfraResult
   [domain-config :- DomainConfig]
