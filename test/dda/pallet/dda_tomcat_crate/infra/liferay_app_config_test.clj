@@ -3,8 +3,8 @@
     [clojure.test :refer :all]
     [schema.core :as s]
     [dda.pallet.dda-tomcat-crate.infra.schema :as schema]
-    [dda.pallet.dda-tomcat-crate.infra.app-config :as sut]
-   ))
+    [dda.pallet.dda-tomcat-crate.infra.app-config :as sut]))
+
 
 (def server-xml-config-case-ajp
   {:shutdown-port "8005"
@@ -53,20 +53,19 @@
     "            unpackWARs=\"true\" autoDeploy=\"true\">"
     ""
     "      <Valve className=\"org.apache.catalina.valves.AccessLogValve\" directory=\"logs\""
-    "            pattern=\"%h %l %u %t &quot;%r&quot; %s %b %D %S\"" 
+    "            pattern=\"%h %l %u %t &quot;%r&quot; %s %b %D %S\""
     "            prefix=\"localhost_access_log.\" suffix=\".txt\""
     "            resolveHosts=\"false\"/>"
     "      </Host>"
     "    </Engine>"
     "  </Service>"
-    "</Server>"]
-  )
+    "</Server>"])
+
 
 (deftest test-server-xml-case-ajp
   (testing
-    (is 
+    (is
       (s/validate schema/ServerXmlConfig server-xml-config-case-ajp))
     (is
       (= expected-server-xml-lines-case-ajp
-         (sut/server-xml server-xml-config-case-ajp)))
-    ))
+         (sut/server-xml server-xml-config-case-ajp)))))

@@ -16,8 +16,8 @@
 
 (ns dda.pallet.dda-tomcat-crate.domain
   (:require
-    [schema.core :as s]
-    [dda.pallet.dda-tomcat-crate.infra :as infra]))
+   [schema.core :as s]
+   [dda.pallet.dda-tomcat-crate.infra :as infra]))
 
 (def DomainConfig
   "Represents the tomcat configuration."
@@ -26,34 +26,34 @@
    (s/optional-key :custom-config)  infra/CustomConfig})
 
 (def default-server-xml-config
- "The default configuration needed for the server-xml file"
- {:shutdown-port "8005"
-  :start-ssl false
-  :executor-daemon "true"
-  :executor-min-spare-threads "4"
-  :executor-max-threads "151"
-  :service-name "Catalina"
-  :connector-port "8080"
-  :connector-protocol "HTTP/1.1"
-  :connection-timeout "61000"
-  :uri-encoding "UTF-8"})
+  "The default configuration needed for the server-xml file"
+  {:shutdown-port "8005"
+   :start-ssl false
+   :executor-daemon "true"
+   :executor-min-spare-threads "4"
+   :executor-max-threads "151"
+   :service-name "Catalina"
+   :connector-port "8080"
+   :connector-protocol "HTTP/1.1"
+   :connection-timeout "61000"
+   :uri-encoding "UTF-8"})
 
 (def default-heap-config
- "The default configuration of the heap settings"
- {:xms "1536m"
-  :xmx "2560m"
-  :max-perm-size "512m"
-  :jdk6 false})
+  "The default configuration of the heap settings"
+  {:xms "512m"
+   :xmx "512m"
+   :max-perm-size "128m"
+   :jdk 8})
 
 (def default-custom-config
- {:remove-manager-webapps true})
+  {:remove-manager-webapps true})
 
 (s/defn ^:always-validate infra-configuration :- infra/InfraResult
   [domain-config :- DomainConfig]
   (let [{:keys [server-xml-config java-vm-config custom-config]
-          :or {server-xml-config default-server-xml-config
-               java-vm-config default-heap-config
-               custom-config default-custom-config}} domain-config
+         :or {server-xml-config default-server-xml-config
+              java-vm-config default-heap-config
+              custom-config default-custom-config}} domain-config
         os-package (not (contains? custom-config :custom-tomcat-home))
         tomcat-home (if os-package
                       "/var/lib/tomcat7/"
@@ -63,20 +63,21 @@
                       (str (get-in custom-config [:custom-tomcat-home]) "conf/"))
         custom-tomcat-bin (if os-package
                             "/usr/share/tomcat7/bin/"
-                            (str tomcat-home "bin/"))]
+                            (str tomcat-home "bin/"))
+        java-package (str "openjdk-" (:jdk java-vm-config) "-jdk")]
     {infra/facility
-      {:server-xml-config server-xml-config
-       :java-vm-config java-vm-config
-       :custom-config custom-config
-       :os-package os-package
-       :tomcat-home-location tomcat-home
-       :config-base-location config-base
-       :webapps-location (str tomcat-home "webapps/")
-       :custom-bin-location custom-tomcat-bin
-       :config-default-location "/etc/default/tomcat7"
-       :config-server-xml-location (str config-base "server.xml")
-       :config-catalina-properties-location (str config-base "catalina.properties")
-       :config-setenv-sh-location (str custom-tomcat-bin "setenv.sh")
-       :webapps-root-xml-location (str config-base "Catalina/localhost/ROOT.xml")
-       :java-package "openjdk-8-jdk"
-       :download-url "http://apache.openmirror.de/tomcat/tomcat-7/v7.0.68/bin/apache-tomcat-7.0.68.tar.gz"}}))
+     {:server-xml-config server-xml-config
+      :java-vm-config java-vm-config
+      :custom-config custom-config
+      :os-package os-package
+      :tomcat-home-location tomcat-home
+      :config-base-location config-base
+      :webapps-location (str tomcat-home "webapps/")
+      :custom-bin-location custom-tomcat-bin
+      :config-default-location "/etc/default/tomcat7"
+      :config-server-xml-location (str config-base "server.xml")
+      :config-catalina-properties-location (str config-base "catalina.properties")
+      :config-setenv-sh-location (str custom-tomcat-bin "setenv.sh")
+      :webapps-root-xml-location (str config-base "Catalina/localhost/ROOT.xml")
+      :java-package java-package
+      :download-url "http://apache.openmirror.de/tomcat/tomcat-7/v7.0.68/bin/apache-tomcat-7.0.68.tar.gz"}}))

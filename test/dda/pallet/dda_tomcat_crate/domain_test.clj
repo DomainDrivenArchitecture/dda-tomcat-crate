@@ -51,10 +51,10 @@
                          :connector-protocol "HTTP/1.1",
                          :connection-timeout "61000"
                          :uri-encoding "UTF-8"}
-     :java-vm-config {:xms "1536m",
-                      :xmx "2560m",
-                      :max-perm-size "512m",
-                      :jdk6 false},}})
+     :java-vm-config {:xms "512m"
+                      :xmx "512m"
+                      :max-perm-size "128m"
+                      :jdk 8}}})
 
 (deftest config-test
   (testing

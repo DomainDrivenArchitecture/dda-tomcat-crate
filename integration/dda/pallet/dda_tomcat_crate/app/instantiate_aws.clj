@@ -40,7 +40,7 @@
 (defn integrated-group-spec [count]
   (merge
     (app/tomcat-group-spec (app/app-configuration domain-config))
-    (cloud-target/node-spec "jem")
+    (cloud-target/node-spec "id_rsa")
     {:count count}))
 
 (defn converge-install
