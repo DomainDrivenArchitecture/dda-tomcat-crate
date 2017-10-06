@@ -43,7 +43,7 @@
 
 (def CustomConfig
   {(s/optional-key :custom-tomcat-home) dir-model/NonRootDirectory
-   :with-manager-webapps s/Bool})
+   :remove-manager-webapps s/Bool})
 
 (def TomcatConfig
   "The configuration for tomcat crate."

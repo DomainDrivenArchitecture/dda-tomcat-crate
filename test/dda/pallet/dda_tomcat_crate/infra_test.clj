@@ -35,7 +35,7 @@
   :java-package "openjdk-8-jdk"
   :download-url
   "http://apache.openmirror.de/tomcat/tomcat-7/v7.0.68/bin/apache-tomcat-7.0.68.tar.gz",
-  :custom-config {:with-manager-webapps false},
+  :custom-config {:remove-manager-webapps false},
   :server-xml-config {:shutdown-port "8005",
                       :executor-daemon "true",
                       :start-ssl false,
@@ -65,7 +65,7 @@
    :java-package "openjdk-8-jdk"
    :download-url
    "http://apache.openmirror.de/tomcat/tomcat-7/v7.0.68/bin/apache-tomcat-7.0.68.tar.gz",
-   :custom-config {:with-manager-webapps false},
+   :custom-config {:remove-manager-webapps false},
    :server-xml-config {:shutdown-port "8005",
                        :executor-daemon "true",
                        :start-ssl false,
@@ -101,7 +101,7 @@
     (is (=
           false
           (get-in (sut/merge-with-internal-config partial-config)
-                  [:custom-config :with-manager-webapps])))
+                  [:custom-config :remove-manager-webapps])))
     (is (=
           expected-config
           (sut/merge-with-internal-config partial-config)))))

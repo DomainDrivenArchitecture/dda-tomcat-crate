@@ -116,7 +116,7 @@
   (if (get-in config [:os-package])
     (actions/package "tomcat7")
     (install-tomcat7-custom config))
-  (when (not (get-in config [:with-manager-webapps]))
+  (when (get-in config [:remove-manager-webapps])
     (remove-manager-webapps (get-in config [:tomcat-home-location]))))
 
 
