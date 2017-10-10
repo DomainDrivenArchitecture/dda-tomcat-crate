@@ -1,4 +1,4 @@
-(defproject dda/dda-tomcat-crate "0.2.1-SNAPSHOT"
+(defproject dda/dda-tomcat-crate "0.2.2-SNAPSHOT"
   :description "tomcat crate of dda-pallet project"
   :url "https://www.domaindrivenarchitecture.org"
   :license {:name "Apache License, Version 2.0"

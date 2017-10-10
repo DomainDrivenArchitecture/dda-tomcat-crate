@@ -22,7 +22,7 @@
      [schema.core :as s]
      [dda.config.commons.map-utils :as map-utils]
      [dda.pallet.dda-tomcat-crate.infra.schema :as schema]))
-    
+
 (def var-lib-tomcat7-webapps-ROOT-META-INF-context-xml
   ["<Context path=\"/\""
    "antiResourceLocking=\"false\" />"])
@@ -116,12 +116,12 @@
        "  </Service>"
        "</Server>"])))
 
+(defn make-java-home [config]
+  (str "JAVA_HOME=/usr/lib/jvm/java-1." (:jdk config) ".0-openjdk-amd64"))
 
 (s/defn setenv-sh
   [config :- schema/JavaVmConfig]
-  [(if (get-in config [:jdk6])
-     "JAVA_HOME=/usr/lib/jvm/java-1.6.0-openjdk-amd64"
-     "#JAVA_HOME=/usr/lib/jvm/java-1.6.0-openjdk-amd64")
+  [(make-java-home config)
    (str "JAVA_OPTS=\"$JAVA_OPTS"
         " -server"
         " -Dfile.encoding=UTF8"
@@ -137,9 +137,7 @@
   [config :- schema/JavaVmConfig]
   ["TOMCAT7_USER=tomcat7"
    "TOMCAT7_GROUP=tomcat7"
-   (if (get-in config [:jdk6])
-     "JAVA_HOME=/usr/lib/jvm/java-1.6.0-openjdk-amd64"
-     "#JAVA_HOME=/usr/lib/jvm/java-1.6.0-openjdk-amd64")
+   (make-java-home config)
    (str "JAVA_OPTS=\"-Dfile.encoding=UTF8 -Djava.net.preferIPv4Stack=true"
         " -Dorg.apache.catalina.loader.WebappClassLoader.ENABLE_CLEAR_REFERENCES=false"
         " -Duser.timezone=GMT"

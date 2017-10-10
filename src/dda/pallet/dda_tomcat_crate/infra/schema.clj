@@ -38,7 +38,7 @@
   {:xms s/Str
    :xmx s/Str
    :max-perm-size s/Str
-   :jdk6 s/Bool})
+   :jdk s/Num})
 
 
 (def CustomConfig
