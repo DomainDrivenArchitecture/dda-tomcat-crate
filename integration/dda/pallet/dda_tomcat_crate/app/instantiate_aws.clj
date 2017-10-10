@@ -15,14 +15,12 @@
 ; limitations under the License.
 (ns dda.pallet.dda-tomcat-crate.app.instantiate-aws
   (:require
-    [pallet.repl :as pr]
     [clojure.inspector :as inspector]
-    [dda.config.commons.map-utils :as mu]
-    [dda.pallet.commons.encrypted-credentials :as crypto]
+    [pallet.repl :as pr]
     [dda.pallet.commons.session-tools :as session-tools]
     [dda.pallet.commons.pallet-schema :as ps]
     [dda.pallet.commons.operation :as operation]
-    [dda.cm.aws :as cloud-target]
+    [dda.pallet.commons.aws :as cloud-target]
     [dda.pallet.dda-tomcat-crate.app :as app]))
 
 (def domain-config
@@ -37,7 +35,7 @@
                        :connection-timeout "61000"
                        :uri-encoding "UTF-8"}})
 
-(defn integrated-group-spec [count]
+(defn provisioning-spec [count]
   (merge
     (app/tomcat-group-spec (app/app-configuration domain-config))
     (cloud-target/node-spec "jem")
@@ -52,17 +50,29 @@
      (if (some? gpg-key-id)
        (cloud-target/provider gpg-key-id gpg-passphrase)
        (cloud-target/provider))
-     (integrated-group-spec count)
+     (provisioning-spec count)
      :summarize-session summarize-session)))
 
-(defn server-test
-  [count & options]
+(defn configure
+  [& options]
   (let [{:keys [gpg-key-id gpg-passphrase
                 summarize-session]
          :or {summarize-session true}} options]
-   (operation/do-server-test
+   (operation/do-apply-configure
      (if (some? gpg-key-id)
        (cloud-target/provider gpg-key-id gpg-passphrase)
        (cloud-target/provider))
-     (integrated-group-spec count)
+     (provisioning-spec 0)
      :summarize-session summarize-session)))
+
+(defn test
+ [& options]
+ (let [{:keys [gpg-key-id gpg-passphrase
+               summarize-session]
+        :or {summarize-session true}} options]
+  (operation/do-server-test
+    (if (some? gpg-key-id)
+      (cloud-target/provider gpg-key-id gpg-passphrase)
+      (cloud-target/provider))
+    (provisioning-spec 0)
+    :summarize-session summarize-session)))
