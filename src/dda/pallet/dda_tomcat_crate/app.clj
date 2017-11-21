@@ -32,7 +32,7 @@
 
 (def with-tomcat infra/with-tomcat)
 
-(s/defn ^:allways-validate app-configuration :- AppConfig
+(s/defn ^:always-validate app-configuration :- AppConfig
  [domain-config :- domain/DomainConfig
   & options]
  (let [{:keys [group-key] :or {group-key :dda-tomcat-group}} options]
