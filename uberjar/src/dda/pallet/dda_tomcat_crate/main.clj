@@ -28,7 +28,7 @@
   [domain-config targets]
   (let [{:keys [existing provisioning-user]} targets]
     (operation/do-server-test
-     (existing/provider {:dda-managed-vm existing})
+     (existing/provider {:dda-tomcat-crate existing})
      (app/existing-provisioning-spec
        domain-config
        provisioning-user)
@@ -38,7 +38,7 @@
   [domain-config targets]
   (let [{:keys [existing provisioning-user]} targets]
     (operation/do-apply-configure
-     (existing/provider {:dda-managed-vm existing})
+     (existing/provider {:dda-tomcat-crate existing})
      (app/existing-provisioning-spec
        domain-config
        provisioning-user)
@@ -48,7 +48,7 @@
   [domain-config targets]
   (let [{:keys [existing provisioning-user]} targets]
     (operation/do-apply-install
-     (existing/provider {:dda-managed-vm existing})
+     (existing/provider {:dda-tomcat-crate existing})
      (app/existing-provisioning-spec
        domain-config
        provisioning-user)

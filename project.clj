@@ -35,6 +35,6 @@
              :uberjar {:source-paths ["uberjar/src"]
                        :resource-paths ["uberjar/resources"]
                        :aot :all
-                       :main dda.pallet.dda-managed-vm.main
+                       :main dda.pallet.dda-tomcat-crate.main
                        :dependencies [[org.clojure/tools.cli "0.3.5"]]}}
    :local-repo-classpath true)
