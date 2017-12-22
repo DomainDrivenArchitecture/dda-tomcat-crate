@@ -39,7 +39,7 @@
 (s/defn ^:always-validate app-configuration :- AppConfig
  [domain-config :- domain/DomainConfig
   & options]
- (let [{:keys [group-key] :or {group-key :dda-tomcat-group}} options]
+ (let [{:keys [group-key] :or {group-key infra/facility}} options]
   {:group-specific-config
      {group-key (domain/infra-configuration domain-config)}}))
 
@@ -57,7 +57,7 @@ load-targets :- Targets
   (existing/load-targets file-name))
 
 (s/defn ^:always-validate
-load-domain :- domain/DomainConfig
+load-domain :- DomainConfig
   [file-name :- s/Str]
   (ext-config/parse-config file-name))
 
