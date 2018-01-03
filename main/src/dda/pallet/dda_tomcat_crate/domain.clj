@@ -19,6 +19,7 @@
    [schema.core :as s]
    [dda.pallet.dda-tomcat-crate.infra :as infra]))
 
+;TODO adjust and make a real domain configuration
 (def DomainConfig
   "Represents the tomcat configuration."
   {(s/optional-key :server-xml-config) infra/ServerXmlConfig

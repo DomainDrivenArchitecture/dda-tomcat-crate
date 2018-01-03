@@ -22,7 +22,9 @@
     [dda.pallet.dda-tomcat-crate.infra :as sut]))
 
 (def partial-config
- {:webapps-root-xml-location "/etc/tomcat7/Catalina/localhost/ROOT.xml"
+ {:tomcat-version 7
+  :java-version 8
+  :webapps-root-xml-location "/etc/tomcat7/Catalina/localhost/ROOT.xml"
   :os-package true
   :tomcat-home-location "/var/lib/tomcat7/"
   :config-base-location "/etc/tomcat7/"

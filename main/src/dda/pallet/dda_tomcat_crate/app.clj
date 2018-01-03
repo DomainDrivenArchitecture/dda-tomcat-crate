@@ -52,12 +52,12 @@
 (def Targets existing/Targets)
 
 (s/defn ^:always-validate
-load-targets :- Targets
+ load-targets :- Targets
   [file-name :- s/Str]
   (existing/load-targets file-name))
 
 (s/defn ^:always-validate
-load-domain :- DomainConfig
+ load-domain :- DomainConfig
   [file-name :- s/Str]
   (ext-config/parse-config file-name))
 

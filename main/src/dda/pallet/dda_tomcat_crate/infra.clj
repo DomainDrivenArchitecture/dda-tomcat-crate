@@ -36,9 +36,6 @@
 (def TomcatConfig
   schema/TomcatConfig)
 
-(def InternalConfig
-  schema/TomcatConfig)
-
 (def InfraResult {facility TomcatConfig})
 
 (s/defn ^:always-validate merge-with-internal-config :- schema/TomcatInternalConfig
