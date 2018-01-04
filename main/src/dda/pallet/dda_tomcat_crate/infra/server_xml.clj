@@ -16,10 +16,12 @@
 (ns dda.pallet.dda-tomcat-crate.infra.server-xml
    (:require
      [clojure.string :as string]
-     [schema.core :as s]))
+     [schema.core :as s]
+     [pallet.actions :as actions]))
 
 (def ServerXmlConfig
-  {:shutdown-port s/Str
+  {:config-server-xml-location s/Str
+   :shutdown-port s/Str
    :start-ssl s/Bool
    :executor-daemon s/Str
    :executor-max-threads s/Str
@@ -88,3 +90,16 @@
        "    </Engine>"
        "  </Service>"
        "</Server>"])))
+
+(s/defn configure-server-xml
+  [config :- ServerXmlConfig]
+  (let [{:keys [config-server-xml-location os-user]} config]
+    (actions/remote-file
+      config-server-xml-location
+      :owner os-user
+      :group os-user
+      :mode "644"
+      :literal true
+      :content (string/join
+                 \newline
+                 (server-xml config)))))

@@ -20,7 +20,8 @@
     [dda.pallet.dda-tomcat-crate.infra.server-xml :as sut]))
 
 (def server-xml-config
-  {:shutdown-port "8005"
+  {:config-server-xml-location ""
+   :shutdown-port "8005"
    :start-ssl false
    :executor-daemon "true"
    :executor-min-spare-threads "4"
