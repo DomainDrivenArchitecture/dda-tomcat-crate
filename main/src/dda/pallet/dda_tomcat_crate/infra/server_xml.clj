@@ -38,7 +38,7 @@
     (concat
       ["<?xml version='1.0' encoding='utf-8'?>"
        (str "<Server port=\"" (:shutdown-port config) "\" shutdown=\"SHUTDOWN\">")]
-      (when (contains? config :start-ssl)
+      (when (:start-ssl config)
           ["  <Listener className=\"org.apache.catalina.core.AprLifecycleListener\" SSLEngine=\"on\" />"])
       ["  <Listener className=\"org.apache.catalina.core.JasperListener\" />"
        "  <Listener className=\"org.apache.catalina.core.JreMemoryLeakPreventionListener\" />"
