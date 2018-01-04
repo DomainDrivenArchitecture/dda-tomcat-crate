@@ -17,33 +17,30 @@
   (:require
     [schema.core :as s]
     [dda.config.commons.directory-model :as dir-model]
-    [dda.pallet.dda-tomcat-crate.infra.server-xml :as server-xml]))
+    [dda.pallet.dda-tomcat-crate.infra.server-xml :as server-xml]
+    [dda.pallet.dda-tomcat-crate.infra.tomcat-vm :as tomcat-vm]
+    [dda.pallet.dda-tomcat-crate.infra.java :as java]))
 
 (def ServerXmlConfig server-xml/ServerXmlConfig)
 
-(def JavaVmConfig
-  {:java-version s/Num
-   :java-package s/Str
-   :download-url s/Str
-   :xms s/Str
-   :xmx s/Str
-   :max-perm-size s/Str})
+(def JavaConfig java/JavaConfig)
+
+(def TomcatVmConfig tomcat-vm/TomcatVmConfig)
 
 (def TomcatLocations
   {:tomcat-home-location dir-model/NonRootDirectory
    :config-base-location dir-model/NonRootDirectory
    :custom-bin-location dir-model/NonRootDirectory
    :webapps-location dir-model/NonRootDirectory
-   :config-default-location s/Str
    :config-server-xml-location s/Str
-   :config-setenv-sh-location s/Str
    :config-catalina-properties-location s/Str
    :webapps-root-xml-location s/Str})
 
 (def TomcatConfig
   "The configuration for tomcat crate."
   {:tomcat-version s/Num
-   :java-vm-config JavaVmConfig
+   :java JavaConfig
+   :tomct-vm TomcatVmConfig
    :tomcat-locations TomcatLocations
    :server-xml-config ServerXmlConfig
    :setenv-sh-lines [s/Str]

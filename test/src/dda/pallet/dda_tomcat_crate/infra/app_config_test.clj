@@ -22,7 +22,7 @@
 (deftest test-setenv-sh
   (testing
     (is
-      (s/validate schema/JavaVmConfig setenv-sh-config))
+      (s/validate schema/TomcatVmConfig setenv-sh-config))
     (is
       (= expected-setenv-sh-lines
          (sut/setenv-sh setenv-sh-config)))))

@@ -20,6 +20,9 @@
     [clojure.string :as string]
     [pallet.actions :as actions]
     [pallet.stevedore :as stevedore]
+    [dda.pallet.dda-tomcat-crate.infra.java :as java]
+    [dda.pallet.dda-tomcat-crate.infra.server-xml :as server-xml]
+    [dda.pallet.dda-tomcat-crate.infra.tomcat-vm :as tomcat-vm]
     [dda.pallet.dda-tomcat-crate.infra.schema :as schema]
     [dda.pallet.dda-tomcat-crate.infra.app-config :as config]))
 
@@ -101,10 +104,6 @@
      :mode "755")
    (make-tomcat-executable config)))
 
-(defn install-openjdk
-  [config]
-  (actions/package (str "openjdk-" (schema/get-java-version config) "-jdk")))
-
 (defn install-tomcat-package
   [config]
   (actions/package (tomcat-package-name config)))
@@ -112,7 +111,7 @@
 (s/defn install-tomcat7
   [config :- schema/TomcatConfig]
   (actions/package "unzip")
-  (install-openjdk config)
+  (java/install-java config)
   (if (get-in config [:os-package])
     (install-tomcat-package config)
     (install-tomcat7-custom config))
@@ -121,9 +120,8 @@
 
 (s/defn configure-tomcat7
   [config :- schema/TomcatConfig]
-  (write-tomcat-file
-    (get-in config [:config-server-xml-location])
-    :content (config/server-xml (get-in config [:server-xml-config])))
+  (server-xml/configure-server-xml config)
+  (tomcat-vm/configure-tomcat-vm config)
   (when (contains? config :catalina-properties-lines)
     (write-tomcat-file
       (get-in config [:config-catalina-properties-location])
@@ -131,12 +129,4 @@
   (when (contains? config :root-xml-lines)
     (write-tomcat-file
       (get-in config [:webapps-root-xml-location])
-      :content (get-in config [:root-xml-lines])))
-  (if (get-in config [:os-package])
-    (write-tomcat-file
-      (get-in config [:config-default-location])
-      :content (get-in config [:default-lines]))
-    (write-tomcat-file
-      (get-in config [:config-setenv-sh-location])
-      :content (get-in config [:setenv-sh-lines])
-      :executable? true)))
+      :content (get-in config [:root-xml-lines]))))

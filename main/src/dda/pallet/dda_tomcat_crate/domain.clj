@@ -23,7 +23,7 @@
 (def DomainConfig
   "Represents the tomcat configuration."
   {(s/optional-key :server-xml-config) infra/ServerXmlConfig
-   (s/optional-key :java-vm-config) infra/JavaVmConfig})
+   (s/optional-key :java-vm-config) infra/TomcatVmConfig})
   ; (s/optional-key :custom-config)  infra/CustomConfig})
 
 (def default-server-xml-config

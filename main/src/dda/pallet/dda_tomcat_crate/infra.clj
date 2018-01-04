@@ -29,7 +29,7 @@
 
 (def ServerXmlConfig schema/ServerXmlConfig)
 
-(def JavaVmConfig schema/JavaVmConfig)
+(def TomcatVmConfig schema/TomcatVmConfig)
 
 (def TomcatConfig
   schema/TomcatConfig)
