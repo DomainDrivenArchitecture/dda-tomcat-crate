@@ -6,7 +6,7 @@
   :dependencies [[org.clojure/clojure "1.7.0"]
                  [prismatic/schema "1.1.7"]
                  [dda/dda-pallet "0.6.5"]
-                 [dda/dda-pallet-commons "0.7.0"]]
+                 [dda/dda-pallet-commons "0.7.1-SNAPSHOT"]]
   :repositories [["snapshots" :clojars]
                  ["releases" :clojars]]
   :deploy-repositories [["snapshots" :clojars]
@@ -21,14 +21,14 @@
               :dependencies
               [[org.domaindrivenarchitecture/pallet-aws "0.2.8.2"]
                [com.palletops/pallet "0.8.12" :classifier "tests"]
-               [dda/dda-serverspec-crate "0.2.2-SNAPSHOT"]
+               [dda/dda-serverspec-crate "0.4.0"]
                [ch.qos.logback/logback-classic "1.2.3"]
-               [org.slf4j/jcl-over-slf4j "1.8.0-alpha2"]]
+               [org.slf4j/jcl-over-slf4j "1.8.0-beta0"]]
               :plugins
               [[lein-sub "0.3.0"]]}
              :repl-options {:init-ns dda.pallet.dda-tomcat-crate.app.instantiate-aws}
              :leiningen/reply
-             {:dependencies [[org.slf4j/jcl-over-slf4j "1.8.0-alpha2"]]
+             {:dependencies [[org.slf4j/jcl-over-slf4j "1.8.0-beta0"]]
               :exclusions [commons-logging]}
              :test {:test-paths ["test/src"]
                     :resource-paths ["test/resources"]

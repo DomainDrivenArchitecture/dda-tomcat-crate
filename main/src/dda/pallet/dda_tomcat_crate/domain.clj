@@ -46,6 +46,14 @@
    :max-perm-size "128m"
    :jdk 8})
 
+;(s/defn ^:always-validate merge-with-internal-config :- schema/TomcatInternalConfig
+;  [config :- TomcatConfig]
+;  (let [{:keys [java-vm-config]} config]
+;    (merge
+;      config
+;      {:default-lines (app-config/default-tomcat7 java-vm-config)
+;       :setenv-sh-lines (app-config/setenv-sh java-vm-config))
+
 (def default-custom-config
   {:remove-manager-webapps true})
 

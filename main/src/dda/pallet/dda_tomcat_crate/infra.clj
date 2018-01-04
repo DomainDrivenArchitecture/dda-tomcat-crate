@@ -31,30 +31,20 @@
 
 (def JavaVmConfig schema/JavaVmConfig)
 
-(def CustomConfig schema/CustomConfig)
-
 (def TomcatConfig
   schema/TomcatConfig)
 
 (def InfraResult {facility TomcatConfig})
 
-(s/defn ^:always-validate merge-with-internal-config :- schema/TomcatInternalConfig
-  [config :- TomcatConfig]
-  (let [{:keys [java-vm-config]} config]
-    (merge
-      config
-      {:default-lines (app-config/default-tomcat7 java-vm-config)
-       :setenv-sh-lines (app-config/setenv-sh java-vm-config)})))
-
 (s/defn ^:always-validate install
   "install function for httpd-crate."
   [config :- TomcatConfig]
-  (app/install-tomcat7 (merge-with-internal-config config)))
+  (app/install-tomcat7 config))
 
 (s/defn ^:always-validate configure
   "configure function for httpd-crate."
   [config :- TomcatConfig]
-  (app/configure-tomcat7 (merge-with-internal-config config)))
+  (app/configure-tomcat7 config))
 
 (s/defn  ^:always-validate init
   "init package management"

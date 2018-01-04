@@ -31,8 +31,8 @@
 (defn write-tomcat-file
   "Create and upload a config file"
   [file-name config & {:keys [content executable? overwrite-changes]
-                               :or   {executable? false
-                                      overwrite-changes true}}]
+                             :or   {executable? false
+                                    overwrite-changes true}}]
   (let [tomcat-user (str "tomcat" (schema/get-tomcat-version config))]
     (if (some? content)
       (actions/remote-file
@@ -50,12 +50,12 @@
 (defn create-tomcat-directory
   [directry-location config]
   (let [tomcat-user (str "tomcat" (schema/get-tomcat-version config))]
-  (actions/directory
-    directry-location
-    :action :create
-    :owner tomcat-user                                      ;assumes existing tomcat7 user
-    :group tomcat-user
-    :mode "755")))
+   (actions/directory
+     directry-location
+     :action :create
+     :owner tomcat-user                                      ;assumes existing tomcat7 user
+     :group tomcat-user
+     :mode "755")))
 
 (s/defn make-tomcat-executable
   [config :- schema/TomcatConfig]
@@ -90,16 +90,16 @@
 (s/defn install-tomcat7-custom
   [config :- schema/TomcatConfig]
   (let [tomcat-user (tomcat-package-name config)]
-  (actions/remote-directory
-    (get-in config [:tomcat-home-location])
-    :action :create
-    :url (get-in config [:download-url])
-    :strip-components 1                                     ;Note: strip-component only works with tar, not with unzip
-    :unpack :tar
-    :owner tomcat-user
-    :group tomcat-user
-    :mode "755")
-  (make-tomcat-executable config)))
+   (actions/remote-directory
+     (get-in config [:tomcat-home-location])
+     :action :create
+     :url (get-in config [:download-url])
+     :strip-components 1                                     ;Note: strip-component only works with tar, not with unzip
+     :unpack :tar
+     :owner tomcat-user
+     :group tomcat-user
+     :mode "755")
+   (make-tomcat-executable config)))
 
 (defn install-openjdk
   [config]
