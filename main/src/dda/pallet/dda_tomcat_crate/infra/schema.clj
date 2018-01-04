@@ -19,6 +19,8 @@
     [dda.config.commons.directory-model :as dir-model]
     [dda.pallet.dda-tomcat-crate.infra.server-xml :as server-xml]))
 
+(def ServerXmlConfig server-xml/ServerXmlConfig)
+
 (def JavaVmConfig
   {:java-version s/Num
    :java-package s/Str
@@ -43,7 +45,7 @@
   {:tomcat-version s/Num
    :java-vm-config JavaVmConfig
    :tomcat-locations TomcatLocations
-   :server-xml-config server-xml/ServerXmlConfig
+   :server-xml-config ServerXmlConfig
    :setenv-sh-lines [s/Str]
    :catalina-properties-lines [s/Str]
    :root-xml-lines [s/Str]
