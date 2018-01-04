@@ -27,6 +27,7 @@
   ["<Context path=\"/\""
    "antiResourceLocking=\"false\" />"])
 
+;TODO version depending
 (def var-lib-tomcat7-webapps-ROOT-index-html
   ["  <?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>"
    "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\""
@@ -62,13 +63,13 @@
 
 (s/defn server-xml
   "the server-xml generator function."
-  [config :- schema/ServerXmlConfig]
+  [config :- schema/TomcatConfig]
   (into
     []
     (concat
       ["<?xml version='1.0' encoding='utf-8'?>"
-       (str "<Server port=\"" (get-in config [:shutdown-port]) "\" shutdown=\"SHUTDOWN\">")]
-      (when (get-in config [:start-ssl])
+       (str "<Server port=\"" (schema/get-shutdown-port config) "\" shutdown=\"SHUTDOWN\">")]
+      (when (schema/get-start-ssl config)
           ["  <Listener className=\"org.apache.catalina.core.AprLifecycleListener\" SSLEngine=\"on\" />"])
       ["  <Listener className=\"org.apache.catalina.core.JasperListener\" />"
        "  <Listener className=\"org.apache.catalina.core.JreMemoryLeakPreventionListener\" />"
@@ -116,34 +117,35 @@
        "  </Service>"
        "</Server>"])))
 
-(defn make-java-home [config]
-  (str "JAVA_HOME=/usr/lib/jvm/java-1." (:jdk config) ".0-openjdk-amd64"))
+(s/defn make-java-home
+  [config :- schema/TomcatConfig]
+  (str "JAVA_HOME=/usr/lib/jvm/java-1." (schema/get-java-version config) ".0-openjdk-amd64"))
 
 (s/defn setenv-sh
-  [config :- schema/JavaVmConfig]
+  [config :- schema/TomcatConfig]
   [(make-java-home config)
    (str "JAVA_OPTS=\"$JAVA_OPTS"
         " -server"
         " -Dfile.encoding=UTF8"
         " -Dorg.apache.catalina.loader.WebappClassLoader.ENABLE_CLEAR_REFERENCES=false"
         " -Duser.timezone=GMT"
-        " -Xms" (get-in config [:xms])
-        " -Xmx" (get-in config [:xmx])
-        " -XX:MaxPermSize=" (get-in config [:max-perm-size]) "\"")])
+        " -Xms" (schema/get-xms config)
+        " -Xmx" (schema/get-xmx config)
+        " -XX:MaxPermSize=" (schema/get-max-perm-size config) "\"")])
 
 
-
+;TODO version depending
 (s/defn default-tomcat7
-  [config :- schema/JavaVmConfig]
+  [config :- schema/TomcatConfig]
   ["TOMCAT7_USER=tomcat7"
    "TOMCAT7_GROUP=tomcat7"
    (make-java-home config)
    (str "JAVA_OPTS=\"-Dfile.encoding=UTF8 -Djava.net.preferIPv4Stack=true"
         " -Dorg.apache.catalina.loader.WebappClassLoader.ENABLE_CLEAR_REFERENCES=false"
         " -Duser.timezone=GMT"
-        " -Xms" (get-in config [:xms])
-        " -Xmx" (get-in config [:xmx])
-        " -XX:MaxPermSize=" (get-in config [:max-perm-size])
+        " -Xms" (-> config :java-vm-config :xms)
+        " -Xmx" (-> config :java-vm-config :xmx)
+        " -XX:MaxPermSize=" (-> config :java-vm-config :max-perm-size)
         " -XX:+UseConcMarkSweepGC\"")
    "#JAVA_OPTS=\"${JAVA_OPTS} -Xdebug -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n\""
    "TOMCAT7_SECURITY=no"
