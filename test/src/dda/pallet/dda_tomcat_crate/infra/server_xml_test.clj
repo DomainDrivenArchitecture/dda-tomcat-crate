@@ -79,4 +79,26 @@
       (s/validate sut/ServerXmlConfig server-xml-config))
     (is
       (= expected-server-xml-lines
-         (sut/server-xml server-xml-config)))))
+         (sut/server-xml
+           {:shutdown-port "8005"
+            :start-ssl false
+            :executor-daemon "true"
+            :executor-min-spare-threads "4"
+            :executor-max-threads "152"
+            :service-name "Catalina"
+            :connector-port "8080"
+            :connector-protocol "HTTP/1.1"
+            :connection-timeout "20000"
+            :uri-encoding "UTF-8"})))
+    (is (filter
+          #(= % "               connectionTimeout=\"20000\" />")
+          (sut/server-xml
+            {:shutdown-port "8005"
+             :start-ssl false
+             :executor-daemon "true"
+             :executor-min-spare-threads "4"
+             :executor-max-threads "152"
+             :service-name "Catalina"
+             :connector-port "8080"
+             :connector-protocol "HTTP/1.1"
+             :connection-timeout "20000"})))))
