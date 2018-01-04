@@ -1,4 +1,4 @@
-(defproject dda/dda-tomcat-crate "0.2.3-SNAPSHOT"
+(defproject dda/dda-tomcat-crate "0.3.0-SNAPSHOT"
   :description "tomcat crate of dda-pallet project"
   :url "https://www.domaindrivenarchitecture.org"
   :license {:name "Apache License, Version 2.0"
@@ -26,6 +26,7 @@
                [org.slf4j/jcl-over-slf4j "1.8.0-alpha2"]]
               :plugins
               [[lein-sub "0.3.0"]]}
+             :repl-options {:init-ns dda.pallet.dda-tomcat-crate.app.instantiate-aws}
              :leiningen/reply
              {:dependencies [[org.slf4j/jcl-over-slf4j "1.8.0-alpha2"]]
               :exclusions [commons-logging]}

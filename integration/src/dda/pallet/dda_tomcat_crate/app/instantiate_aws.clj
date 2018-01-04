@@ -23,56 +23,44 @@
     [dda.pallet.commons.aws :as cloud-target]
     [dda.pallet.dda-tomcat-crate.app :as app]))
 
-(def domain-config
-  {:server-xml-config {:shutdown-port "8005"
-                       :start-ssl false
-                       :executor-daemon "true"
-                       :executor-min-spare-threads "4"
-                       :executor-max-threads "151"
-                       :service-name "Catalina"
-                       :connector-port "8009"
-                       :connector-protocol "AJP/1.3"
-                       :connection-timeout "61000"
-                       :uri-encoding "UTF-8"}})
-
-(defn provisioning-spec [count]
+(defn provisioning-spec [domain-config target-config count]
   (merge
     (app/tomcat-group-spec (app/app-configuration domain-config))
-    (cloud-target/node-spec "id_rsa")
+    (cloud-target/node-spec target-config)
     {:count count}))
 
 (defn converge-install
   [count & options]
-  (let [{:keys [gpg-key-id gpg-passphrase
-                summarize-session]
-         :or {summarize-session true}} options]
+  (let [{:keys [gpg-key-id gpg-passphrase domain target]
+         :or {domain "tomcat.edn"
+              target "integration/resources/jem-aws-target.edn"}} options
+        target-config (cloud-target/load-targets target)
+        domain-config (app/load-domain domain)]
    (operation/do-converge-install
-     (if (some? gpg-key-id)
-       (cloud-target/provider gpg-key-id gpg-passphrase)
-       (cloud-target/provider))
-     (provisioning-spec count)
-     :summarize-session summarize-session)))
+     (cloud-target/provider (:context target-config))
+     (provisioning-spec domain-config (:node-spec target-config) count)
+     :summarize-session true)))
 
 (defn configure
-  [& options]
-  (let [{:keys [gpg-key-id gpg-passphrase
-                summarize-session]
-         :or {summarize-session true}} options]
-   (operation/do-apply-configure
-     (if (some? gpg-key-id)
-       (cloud-target/provider gpg-key-id gpg-passphrase)
-       (cloud-target/provider))
-     (provisioning-spec 0)
-     :summarize-session summarize-session)))
-
-(defn test
  [& options]
- (let [{:keys [gpg-key-id gpg-passphrase
-               summarize-session]
-        :or {summarize-session true}} options]
-  (operation/do-server-test
-    (if (some? gpg-key-id)
-      (cloud-target/provider gpg-key-id gpg-passphrase)
-      (cloud-target/provider))
-    (provisioning-spec 0)
-    :summarize-session summarize-session)))
+ (let [{:keys [gpg-key-id gpg-passphrase domain target]
+        :or {domain "tomcat.edn"
+             target "integration/resources/jem-aws-target.edn"}} options
+       target-config (cloud-target/load-targets target)
+       domain-config (app/load-domain domain)]
+  (operation/do-apply-configure
+    (cloud-target/provider (:context target-config))
+    (provisioning-spec domain-config (:node-spec target-config) 0)
+    :summarize-session true)))
+
+(defn serverspec
+  [& options]
+  (let [{:keys [gpg-key-id gpg-passphrase domain target]
+         :or {domain "tomcat.edn"
+              target "integration/resources/jem-aws-target.edn"}} options
+        target-config (cloud-target/load-targets target)
+        domain-config (app/load-domain domain)]
+   (operation/do-server-test
+     (cloud-target/provider (:context target-config))
+     (provisioning-spec domain-config (:node-spec target-config) 0)
+     :summarize-session true)))

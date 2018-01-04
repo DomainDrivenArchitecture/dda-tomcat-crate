@@ -61,7 +61,7 @@
       (provisioning-spec target-config domain-config)
       :summarize-session true)))
 
-(defn test
+(defn test-node
   [& options]
   (let [{:keys [domain targets]
          :or {domain "tomcat.edn"
