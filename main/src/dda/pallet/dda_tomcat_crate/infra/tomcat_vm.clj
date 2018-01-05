@@ -25,7 +25,11 @@
    :java-home s/Str
    :xms s/Str
    :xmx s/Str
-   :max-perm-size s/Str})
+   :max-perm-size s/Str
+   :settings (hash-set (s/enum :prefer-ipv4 :disable-cl-clear-ref
+                               :conc-mark-sweep-gc :timezone-gmt
+                               :disable-tomcat-security))
+   (s/optional-key :catalina-opts) s/Str})
 
 (def TomcatVmConfig
   (s/either
@@ -36,36 +40,38 @@
       BaseTomcatVmConfig
       {:os-package {:config-default-location s/Str}})))
 
-(s/defn setenv-sh
-  [config :- TomcatVmConfig]
-  (let [{:keys [java-home xms xmx max-perm-size]} config]
-    [(str "JAVA_HOME=" java-home)
-     (str "JAVA_OPTS=\"$JAVA_OPTS"
-          " -server"
-          " -Dfile.encoding=UTF8"
-          " -Dorg.apache.catalina.loader.WebappClassLoader.ENABLE_CLEAR_REFERENCES=false"
-          " -Duser.timezone=GMT"
-          " -Xms" xms
-          " -Xmx" xmx
-          " -XX:MaxPermSize=" max-perm-size "\"")]))
-
 ; todo: version-spec
-(s/defn default-tomcat
+(s/defn
+  tomcat-env :- [s/Str]
   [config :- TomcatVmConfig]
-  (let [{:keys [os-user java-home xms xmx max-perm-size]} config]
-    [(str "TOMCAT7_USER=" os-user)
-     (str "TOMCAT7_GROUP=" os-user)
-     (str "JAVA_HOME=" java-home)
-     (str "JAVA_OPTS=\"-Dfile.encoding=UTF8 -Djava.net.preferIPv4Stack=true"
-          " -Dorg.apache.catalina.loader.WebappClassLoader.ENABLE_CLEAR_REFERENCES=false"
-          " -Duser.timezone=GMT"
-          " -Xms" xms
-          " -Xmx" xmx
-          " -XX:MaxPermSize=" max-perm-size
-          " -XX:+UseConcMarkSweepGC\"")
-     "#JAVA_OPTS=\"${JAVA_OPTS} -Xdebug -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n\""
-     "TOMCAT7_SECURITY=no"
-     "#AUTHBIND=no"]))
+  (let [{:keys [os-user java-home xms xmx max-perm-size settings
+                catalina-opts]} config]
+    (into
+      []
+      (concat
+        [(str "TOMCAT7_USER=" os-user)
+         (str "TOMCAT7_GROUP=" os-user)
+         (str "JAVA_HOME=" java-home)
+         (str "JAVA_OPTS=\"${JAVA_OPTS}"
+              " -server"
+              " -Dfile.encoding=UTF8"
+              (when (contains? settings :prefer-ipv4)
+                " -Djava.net.preferIPv4Stack=true")
+              (when (contains? settings :disable-cl-clear-ref)
+                " -Dorg.apache.catalina.loader.WebappClassLoader.ENABLE_CLEAR_REFERENCES=false")
+              (when (contains? settings :timezone-gmt)
+                " -Duser.timezone=GMT")
+              " -Xms" xms
+              " -Xmx" xmx
+              " -XX:MaxPermSize=" max-perm-size
+              (when (contains? settings :conc-mark-sweep-gc)
+               " -XX:+UseConcMarkSweepGC")
+              "\"")
+         "#JAVA_OPTS=\"${JAVA_OPTS} -Xdebug -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n\""]
+        (when (contains? config :catalina-opts)
+          [(str "CATALINA_OPTS=\"" catalina-opts "\"")])
+        (when (contains? settings :disable-tomcat-security)
+          ["TOMCAT7_SECURITY=no"])))))
 
 (s/defn configure-tomcat-vm
   [config :- TomcatVmConfig]
@@ -79,7 +85,7 @@
         :literal true
         :content (string/join
                    \newline
-                   (default-tomcat config))))
+                   (tomcat-env config))))
     (when (contains? config :custom)
         (actions/remote-file
           (:config-setenv-sh-location custom)
@@ -89,4 +95,4 @@
           :literal true
           :content (string/join
                      \newline
-                     (setenv-sh config))))))
+                     (tomcat-env config))))))
