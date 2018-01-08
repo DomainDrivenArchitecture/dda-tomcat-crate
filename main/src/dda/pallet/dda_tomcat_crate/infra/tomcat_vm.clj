@@ -35,10 +35,10 @@
   (s/either
     (merge
       BaseTomcatVmConfig
-      {:custom {:config-setenv-sh-location s/Str}})
+      {:download {:config-setenv-sh-location s/Str}})
     (merge
       BaseTomcatVmConfig
-      {:os-package {:config-default-location s/Str}})))
+      {:managed {:config-default-location s/Str}})))
 
 ; todo: version-spec
 (s/defn
@@ -75,10 +75,10 @@
 
 (s/defn configure-tomcat-vm
   [config :- TomcatVmConfig]
-  (let [{:keys [os-user custom os-package]} config]
-    (when (contains? config :os-package)
+  (let [{:keys [os-user download managed]} config]
+    (when (contains? config :managed)
       (actions/remote-file
-        (:config-default-location os-package)
+        (:config-default-location managed)
         :owner os-user
         :group os-user
         :mode "644"
@@ -86,9 +86,9 @@
         :content (string/join
                    \newline
                    (tomcat-env config))))
-    (when (contains? config :custom)
+    (when (contains? config :download)
         (actions/remote-file
-          (:config-setenv-sh-location custom)
+          (:config-setenv-sh-location download)
           :owner (:os-user config)
           :group (:os-user config)
           :mode "755"

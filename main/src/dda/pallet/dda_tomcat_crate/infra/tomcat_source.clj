@@ -21,7 +21,7 @@
 
 (def TomcatManaged
   {:tomcat-managed
-   {:pacakge-name s/Str}})
+   {:package-name s/Str}})
 
 (def TomcatDownload
   {:tomcat-download
