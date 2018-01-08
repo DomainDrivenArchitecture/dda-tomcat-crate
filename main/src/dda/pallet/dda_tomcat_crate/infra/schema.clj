@@ -20,7 +20,9 @@
     [dda.pallet.dda-tomcat-crate.infra.server-xml :as server-xml]
     [dda.pallet.dda-tomcat-crate.infra.tomcat-vm :as tomcat-vm]
     [dda.pallet.dda-tomcat-crate.infra.management-webapp :as mgm-webapp]
-    [dda.pallet.dda-tomcat-crate.infra.java :as java]))
+    [dda.pallet.dda-tomcat-crate.infra.java :as java]
+    [dda.pallet.dda-tomcat-crate.infra.catalina-properties :as catalina-properties]
+    [dda.pallet.dda-tomcat-crate.infra.root-xml :as root-xml]))
 
 (def ServerXmlConfig server-xml/ServerXmlConfig)
 
@@ -31,51 +33,13 @@
 (def TomcatLocations
   {:tomcat-home-location dir-model/NonRootDirectory
    :config-base-location dir-model/NonRootDirectory
-   :custom-bin-location dir-model/NonRootDirectory
-   :webapps-location dir-model/NonRootDirectory
-   :config-server-xml-location s/Str
-   :config-catalina-properties-location s/Str
-   :webapps-root-xml-location s/Str})
+   :custom-bin-location dir-model/NonRootDirectory})
 
 (def TomcatConfig
   "The configuration for tomcat crate."
   {:java JavaConfig
    :tomct-vm TomcatVmConfig
    :server-xml-config ServerXmlConfig
-   :setenv-sh-lines [s/Str]
    (s/optional-key :remove-manager-webapps) mgm-webapp/ManagementWebapp
-   :tomcat-locations TomcatLocations
-   :tomcat-version s/Num
-   :catalina-properties-lines [s/Str]
-   :root-xml-lines [s/Str]
-   :download-url s/Str
-   :settings (hash-set (s/enum :remove-manager-webapps))})
-
-; deprecated
-(defn get-tomcat-version
-  [config]
-  (-> config :tomcat-version))
-
-(defn get-java-version
-  [config]
-  (-> config :java-version))
-
-(s/defn get-xms :- s/Str
-  [config :- TomcatConfig]
-  (-> config :java-vm-config :xms))
-
-(s/defn get-xmx :- s/Str
-  [config :- TomcatConfig]
-  (-> config :java-vm-config :xmx))
-
-(s/defn get-max-perm-size :- s/Str
-  [config :- TomcatConfig]
-  (-> config :java-vm-config :max-perm-size))
-
-(s/defn get-shutdown-port :- s/Str
-  [config :- TomcatConfig]
-  (-> config :server-xml-config :shutdown-port))
-
-(s/defn get-start-ssl :- s/Bool
-  [config :- TomcatConfig]
-  (-> config :server-xml-config :start-ssl))
+   (s/optional-key :catalina-properties) catalina-properties/CatalinaProperties
+   (s/optional-key :root-xml) root-xml/RootXml})

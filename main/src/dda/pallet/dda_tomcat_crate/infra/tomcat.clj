@@ -14,7 +14,7 @@
 ; See the License for the specific language governing permissions and
 ; limitations under the License.
 
-(ns dda.pallet.dda-tomcat-crate.infra.app
+(ns dda.pallet.dda-tomcat-crate.infra.tomcat
   (:require
     [schema.core :as s]
     [clojure.string :as string]
@@ -24,6 +24,8 @@
     [dda.pallet.dda-tomcat-crate.infra.server-xml :as server-xml]
     [dda.pallet.dda-tomcat-crate.infra.tomcat-vm :as tomcat-vm]
     [dda.pallet.dda-tomcat-crate.infra.management-webapp :as mgm-webapp]
+    [dda.pallet.dda-tomcat-crate.infra.catalina-properties :as catalina-properties]
+    [dda.pallet.dda-tomcat-crate.infra.root-xml :as root-xml]
     [dda.pallet.dda-tomcat-crate.infra.schema :as schema]))
 
 (defn- tomcat-package-name
@@ -102,14 +104,10 @@
 
 (s/defn configure-tomcat7
   [config :- schema/TomcatConfig]
-  (let [{:keys [tomct-vm server-xml-config]} config]
+  (let [{:keys [tomct-vm server-xml-config catalina-properties root-xml]} config]
     (server-xml/configure-server-xml server-xml-config)
     (tomcat-vm/configure-tomcat-vm tomct-vm)
-    (when (contains? config :catalina-properties-lines)
-      (write-tomcat-file
-        (get-in config [:config-catalina-properties-location])
-        :content (get-in config [:catalina-properties-lines])))
-    (when (contains? config :root-xml-lines)
-      (write-tomcat-file
-        (get-in config [:webapps-root-xml-location])
-        :content (get-in config [:root-xml-lines])))))
+    (when (contains? config :catalina-properties)
+      (catalina-properties catalina-properties))
+    (when (contains? config :root-xml)
+      (root-xml/root-xml root-xml))))

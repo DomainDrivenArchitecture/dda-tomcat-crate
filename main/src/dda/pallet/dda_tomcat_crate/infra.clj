@@ -22,7 +22,7 @@
     [dda.pallet.core.dda-crate :as dda-crate]
     [dda.config.commons.map-utils :as map-utils]
     [dda.pallet.dda-tomcat-crate.infra.schema :as schema]
-    [dda.pallet.dda-tomcat-crate.infra.app :as app]))
+    [dda.pallet.dda-tomcat-crate.infra.tomcat :as app]))
 
 (def facility :dda-tomcat)
 
