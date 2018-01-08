@@ -20,30 +20,49 @@
     [pallet.api :as api]
     [pallet.actions :as actions]
     [dda.pallet.core.dda-crate :as dda-crate]
-    [dda.config.commons.map-utils :as map-utils]
-    [dda.pallet.dda-tomcat-crate.infra.schema :as schema]
-    [dda.pallet.dda-tomcat-crate.infra.tomcat :as app]))
+    [dda.pallet.dda-tomcat-crate.infra.java :as java]
+    [dda.pallet.dda-tomcat-crate.infra.tomcat-source :as tomcat-source]
+    [dda.pallet.dda-tomcat-crate.infra.tomcat-vm :as tomcat-vm]
+    [dda.pallet.dda-tomcat-crate.infra.server-xml :as server-xml]
+    [dda.pallet.dda-tomcat-crate.infra.root-xml :as root-xml]
+    [dda.pallet.dda-tomcat-crate.infra.catalina-properties :as catalina-properties]
+    [dda.pallet.dda-tomcat-crate.infra.management-webapp :as mgm-webapp]))
 
 (def facility :dda-tomcat)
 
-(def ServerXmlConfig schema/ServerXmlConfig)
-
-(def TomcatVmConfig schema/TomcatVmConfig)
-
 (def TomcatConfig
-  schema/TomcatConfig)
+  "The configuration for tomcat crate."
+  {:java java/JavaConfig
+   :tomcat-source tomcat-source/TomcatSource
+   :tomct-vm tomcat-vm/TomcatVmConfig
+   :server-xml server-xml/ServerXmlConfig
+   (s/optional-key :remove-manager-webapps) mgm-webapp/ManagementWebapp
+   (s/optional-key :catalina-properties) catalina-properties/CatalinaProperties
+   (s/optional-key :root-xml) root-xml/RootXml})
 
 (def InfraResult {facility TomcatConfig})
 
-(s/defn ^:always-validate install
+(s/defn ^:always-validate
+  install
   "install function for httpd-crate."
   [config :- TomcatConfig]
-  (app/install-tomcat7 config))
+  (let [{:keys [java tomcat-source remove-manager-webapps]} config]
+    (java/install-java java)
+    (tomcat-source/install-tomcat tomcat-source)
+    (when (contains? config :remove-manager-webapps)
+      (mgm-webapp/remove-manager-webapps remove-manager-webapps))))
 
-(s/defn ^:always-validate configure
+(s/defn ^:always-validate
+  configure
   "configure function for httpd-crate."
   [config :- TomcatConfig]
-  (app/configure-tomcat7 config))
+  (let [{:keys [tomct-vm server-xml catalina-properties root-xml]} config]
+    (server-xml/configure-server-xml server-xml)
+    (tomcat-vm/configure-tomcat-vm tomct-vm)
+    (when (contains? config :catalina-properties)
+      (catalina-properties catalina-properties))
+    (when (contains? config :root-xml)
+      (root-xml/root-xml root-xml))))
 
 (s/defn  ^:always-validate init
   "init package management"
