@@ -21,6 +21,7 @@
 
 (def ServerXmlConfig
   {:config-server-xml-location s/Str
+   :os-user s/Str
    :shutdown-port s/Str
    :start-ssl s/Bool
    :executor-daemon s/Str

@@ -75,7 +75,8 @@
        :connector-protocol "HTTP/1.1"
        :connection-timeout "61000"
        :uri-encoding "UTF-8"
-       :config-server-xml-location (str config-base "server.xml")}
+       :config-server-xml-location (str config-base "server.xml")
+       :os-user "tomcat7"}
      :tomct-vm
       {:managed {:config-default-location "/etc/default/tomcat7"}
        :settings #{}
