@@ -13,7 +13,6 @@
 ; WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 ; See the License for the specific language governing permissions and
 ; limitations under the License.
-
 (ns dda.pallet.dda-tomcat-crate.app
   (:require
     [schema.core :as s]
@@ -24,44 +23,47 @@
     [dda.pallet.commons.existing :as existing]
     [dda.pallet.commons.external-config :as ext-config]))
 
+
+(def with-tomcat infra/with-tomcat)
+
 (def InfraResult infra/InfraResult)
 
 (def DomainConfig domain/DomainConfig)
 
 (def ProvisioningUser existing/ProvisioningUser)
 
+(def Targets existing/Targets)
+
 (def AppConfig
   {:group-specific-config
    {s/Keyword InfraResult}})
 
-(def with-tomcat infra/with-tomcat)
-
-(s/defn ^:always-validate app-configuration :- AppConfig
- [domain-config :- domain/DomainConfig
-  & options]
- (let [{:keys [group-key] :or {group-key infra/facility}} options]
-  {:group-specific-config
-     {group-key (domain/infra-configuration domain-config)}}))
-
-(s/defn ^:always-validate tomcat-group-spec
- [app-config :- AppConfig]
- (group/group-spec
-   app-config [(config-crate/with-config app-config)
-               with-tomcat]))
-
-(def Targets existing/Targets)
-
 (s/defn ^:always-validate
- load-targets :- Targets
+  load-targets :- Targets
   [file-name :- s/Str]
   (existing/load-targets file-name))
 
 (s/defn ^:always-validate
- load-domain :- DomainConfig
+  load-domain :- DomainConfig
   [file-name :- s/Str]
   (ext-config/parse-config file-name))
 
-(s/defn ^:always-validate existing-provisioning-spec
+(s/defn ^:always-validate
+  app-configuration :- AppConfig
+  [domain-config :- domain/DomainConfig & options]
+ (let [{:keys [group-key] :or {group-key infra/facility}} options]
+  {:group-specific-config
+     {group-key (domain/infra-configuration domain-config)}}))
+
+(s/defn ^:always-validate
+  tomcat-group-spec
+  [app-config :- AppConfig]
+  (group/group-spec
+    app-config [(config-crate/with-config app-config)
+                with-tomcat]))
+
+(s/defn ^:always-validate
+  existing-provisioning-spec
   "Creates an integrated group spec from a domain config and a provisioning user."
   [domain-config :- domain/DomainConfig
    provisioning-user :- ProvisioningUser]
