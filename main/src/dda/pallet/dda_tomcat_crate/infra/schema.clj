@@ -19,6 +19,7 @@
     [dda.config.commons.directory-model :as dir-model]
     [dda.pallet.dda-tomcat-crate.infra.server-xml :as server-xml]
     [dda.pallet.dda-tomcat-crate.infra.tomcat-vm :as tomcat-vm]
+    [dda.pallet.dda-tomcat-crate.infra.management-webapp :as mgm-webapp]
     [dda.pallet.dda-tomcat-crate.infra.java :as java]))
 
 (def ServerXmlConfig server-xml/ServerXmlConfig)
@@ -38,12 +39,13 @@
 
 (def TomcatConfig
   "The configuration for tomcat crate."
-  {:tomcat-version s/Num
-   :java JavaConfig
+  {:java JavaConfig
    :tomct-vm TomcatVmConfig
-   :tomcat-locations TomcatLocations
    :server-xml-config ServerXmlConfig
    :setenv-sh-lines [s/Str]
+   (s/optional-key :remove-manager-webapps) mgm-webapp/ManagementWebapp
+   :tomcat-locations TomcatLocations
+   :tomcat-version s/Num
    :catalina-properties-lines [s/Str]
    :root-xml-lines [s/Str]
    :download-url s/Str

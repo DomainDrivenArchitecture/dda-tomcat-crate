@@ -23,8 +23,8 @@
     [dda.pallet.dda-tomcat-crate.infra.java :as java]
     [dda.pallet.dda-tomcat-crate.infra.server-xml :as server-xml]
     [dda.pallet.dda-tomcat-crate.infra.tomcat-vm :as tomcat-vm]
-    [dda.pallet.dda-tomcat-crate.infra.schema :as schema]
-    [dda.pallet.dda-tomcat-crate.infra.app-config :as config]))
+    [dda.pallet.dda-tomcat-crate.infra.management-webapp :as mgm-webapp]
+    [dda.pallet.dda-tomcat-crate.infra.schema :as schema]))
 
 (defn- tomcat-package-name
   "Represents the tomcat package name. E.g. tomcat7"
@@ -71,25 +71,6 @@
         :action :touch
         :mode 755))))
 
-(s/defn remove-manager-webapps
-  [config :- schema/TomcatConfig]
-  (let [webapps (get-in config [:webapps-location])]
-    (doseq [dir ["docs" "examples" "host-manager" "manager" "ROOT"]]
-      (let [dir-path (str webapps "/" dir)]
-        (actions/directory
-          dir-path
-          :action :delete)))
-    (create-tomcat-directory (str webapps "/ROOT") config)
-    (create-tomcat-directory (str webapps "/ROOT/META-INF") config)
-    (write-tomcat-file (str webapps "/ROOT/index.html") config
-                       :overwrite-changes false
-                       :executable? true
-                       :content config/var-lib-tomcat7-webapps-ROOT-index-html)
-    (write-tomcat-file (str webapps "/ROOT/META-INF/context.xml") config
-                       :overwrite-changes false
-                       :executable? true
-                       :content config/var-lib-tomcat7-webapps-ROOT-META-INF-context-xml)))
-
 (s/defn install-tomcat7-custom
   [config :- schema/TomcatConfig]
   (let [tomcat-user (tomcat-package-name config)]
@@ -110,23 +91,25 @@
 
 (s/defn install-tomcat7
   [config :- schema/TomcatConfig]
-  (actions/package "unzip")
-  (java/install-java config)
-  (if (get-in config [:os-package])
-    (install-tomcat-package config)
-    (install-tomcat7-custom config))
-  (when (get-in config [:remove-manager-webapps])
-    (remove-manager-webapps (get-in config [:tomcat-home-location]))))
+  (let [{:keys [remove-manager-webapps]} config]
+    (actions/package "unzip")
+    (java/install-java config)
+    (if (get-in config [:os-package])
+      (install-tomcat-package config)
+      (install-tomcat7-custom config))
+    (when (contains? config :remove-manager-webapps)
+      (mgm-webapp/remove-manager-webapps remove-manager-webapps))))
 
 (s/defn configure-tomcat7
   [config :- schema/TomcatConfig]
-  (server-xml/configure-server-xml config)
-  (tomcat-vm/configure-tomcat-vm config)
-  (when (contains? config :catalina-properties-lines)
-    (write-tomcat-file
-      (get-in config [:config-catalina-properties-location])
-      :content (get-in config [:catalina-properties-lines])))
-  (when (contains? config :root-xml-lines)
-    (write-tomcat-file
-      (get-in config [:webapps-root-xml-location])
-      :content (get-in config [:root-xml-lines]))))
+  (let [{:keys [tomct-vm server-xml-config]} config]
+    (server-xml/configure-server-xml server-xml-config)
+    (tomcat-vm/configure-tomcat-vm tomct-vm)
+    (when (contains? config :catalina-properties-lines)
+      (write-tomcat-file
+        (get-in config [:config-catalina-properties-location])
+        :content (get-in config [:catalina-properties-lines])))
+    (when (contains? config :root-xml-lines)
+      (write-tomcat-file
+        (get-in config [:webapps-root-xml-location])
+        :content (get-in config [:root-xml-lines])))))
