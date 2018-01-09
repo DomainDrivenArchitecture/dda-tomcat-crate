@@ -30,7 +30,7 @@
    :service-name "Catalina"
    :connector-port "8080"
    :connector-protocol "HTTP/1.1"
-   :connection-timeout "20000"
+   :connection-timeout "12345"
    :uri-encoding "UTF-8"})
 
 (def server-xml-config-wo-url-encoding
@@ -59,6 +59,49 @@
    :connector-protocol "AJP/1.3"
    :connection-timeout "20000"
    :uri-encoding "UTF-8"})
+
+(deftest test-validity
+  (testing
+    (is
+      (s/validate sut/ServerXmlConfig server-xml-config))
+    (is
+      (s/validate sut/ServerXmlConfig server-xml-config-wo-url-encoding))
+    (is
+      (s/validate sut/ServerXmlConfig server-xml-config-ajp))))
+
+(deftest test-server-xml-config
+  (testing
+    (is
+      (filter
+        #(= % "<Server port=\"8005\" shutdown=\"SHUTDOWN\">")
+        (sut/server-xml server-xml-config)))
+    (is (empty?
+          (filter
+            #(= % "  <Listener className=\"org.apache.catalina.core.AprLifecycleListener\" SSLEngine=\"on\" />")
+            (sut/server-xml server-xml-config))))
+    (is (filter
+          #(= % "               URIEncoding=\"UTF-8\"")
+          (sut/server-xml server-xml-config)))
+    (is (filter
+          #(= % "               connectionTimeout=\"12345\" />")
+          (sut/server-xml server-xml-config)))))
+
+(deftest test-server-xml-config-wo-url-encoding
+  (testing
+    (is (empty?
+          (filter
+            #(= % "               URIEncoding=\"UTF-8\"")
+            (sut/server-xml server-xml-config))))))
+
+(deftest test-server-server-xml-config-ajp
+  (testing
+    (is (filter
+          #(= % "  <Listener className=\"org.apache.catalina.core.AprLifecycleListener\" SSLEngine=\"on\" />")
+          (sut/server-xml server-xml-config-ajp)))
+    (is
+      (filter
+        #(= % "    <Connector executor=\"tomcatThreadPool\" port=\"8009\" protocol=\"AJP/1.3\"")
+         (sut/server-xml server-xml-config-ajp)))))
 
 (def expected-server-xml-lines
   ["<?xml version='1.0' encoding='utf-8'?>"
@@ -144,21 +187,3 @@
     "    </Engine>"
     "  </Service>"
     "</Server>"])
-
-(deftest test-server-xml
-  (testing
-    (is
-      (s/validate sut/ServerXmlConfig server-xml-config))
-    (is
-      (s/validate sut/ServerXmlConfig server-xml-config-wo-url-encoding))
-    (is
-      (s/validate sut/ServerXmlConfig server-xml-config-ajp))
-    (is
-      (= expected-server-xml-lines
-         (sut/server-xml server-xml-config)))
-    (is (filter
-          #(= % "               connectionTimeout=\"20000\" />")
-          (sut/server-xml server-xml-config-wo-url-encoding)))
-    (is
-      (= expected-server-xml-lines-ajp
-         (sut/server-xml server-xml-config-ajp)))))

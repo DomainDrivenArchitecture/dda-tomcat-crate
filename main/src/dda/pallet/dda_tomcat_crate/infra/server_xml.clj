@@ -17,6 +17,7 @@
    (:require
      [clojure.string :as string]
      [schema.core :as s]
+     [selmer.parser :as selmer]
      [pallet.actions :as actions]))
 
 (def ServerXmlConfig
@@ -36,61 +37,12 @@
 (s/defn server-xml
   "the server-xml generator function."
   [config :- ServerXmlConfig]
-  (into
-    []
-    (concat
-      ["<?xml version='1.0' encoding='utf-8'?>"
-       (str "<Server port=\"" (:shutdown-port config) "\" shutdown=\"SHUTDOWN\">")]
-      (when (:start-ssl config)
-          ["  <Listener className=\"org.apache.catalina.core.AprLifecycleListener\" SSLEngine=\"on\" />"])
-      ["  <Listener className=\"org.apache.catalina.core.JasperListener\" />"
-       "  <Listener className=\"org.apache.catalina.core.JreMemoryLeakPreventionListener\" />"
-       "  <Listener className=\"org.apache.catalina.mbeans.GlobalResourcesLifecycleListener\" />"
-       "  <Listener className=\"org.apache.catalina.core.ThreadLocalLeakPreventionListener\" />"
-       ""
-       "  <GlobalNamingResources>"
-       "    <Resource name=\"UserDatabase\" auth=\"Container\""
-       "              type=\"org.apache.catalina.UserDatabase\""
-       "              description=\"User database that can be updated and saved\""
-       "              factory=\"org.apache.catalina.users.MemoryUserDatabaseFactory\""
-       "              pathname=\"conf/tomcat-users.xml\" />"
-       "  </GlobalNamingResources>"
-       ""
-       (str "  <Service name=\"" (:service-name config) "\">")
-       ""
-       "    <Executor name=\"tomcatThreadPool\" namePrefix=\"catalina-exec-\""
-       (str "       "
-            " daemon=\"" (:executor-daemon config) "\""
-            " maxThreads=\"" (:executor-max-threads config) "\""
-            " minSpareThreads=\"" (:executor-min-spare-threads config) "\"/>")
-       ""
-       (str "    <Connector executor=\"tomcatThreadPool\" "
-            "port=\"" (:connector-port config) "\" "
-            "protocol=\"" (:connector-protocol config) "\"")]
-      (if (contains? config :uri-encoding)
-       [(str "               "
-             "connectionTimeout=\"" (:connection-timeout config) "\" "
-             "URIEncoding=\"" (:uri-encoding config) "\" />")]
-       [(str "               "
-             "connectionTimeout=\"" (:connection-timeout config) "\" />")])
-      [""
-       "    <Engine name=\"Catalina\" defaultHost=\"localhost\">"
-       ""
-       "      <Realm className=\"org.apache.catalina.realm.LockOutRealm\"/>"
-       "      <Realm className=\"org.apache.catalina.realm.UserDatabaseRealm\""
-       "             resourceName=\"UserDatabase\"/>"
-       ""
-       "      <Host name=\"localhost\"  appBase=\"webapps\""
-       "            unpackWARs=\"true\" autoDeploy=\"true\">"
-       ""
-       "      <Valve className=\"org.apache.catalina.valves.AccessLogValve\" directory=\"logs\""
-       "            pattern=\"%h %l %u %t &quot;%r&quot; %s %b %D %S\""
-       "            prefix=\"localhost_access_log.\" suffix=\".txt\""
-       "            resolveHosts=\"false\"/>"
-       "      </Host>"
-       "    </Engine>"
-       "  </Service>"
-       "</Server>"])))
+  (string/split
+    (selmer/render-file "etc_tomcat7_server.xml.template"
+                        (merge
+                          config
+                          {:contains-uri-encode? (contains? config :uri-encoding)}))
+    #"\n"))
 
 (s/defn configure-server-xml
   [config :- ServerXmlConfig]
