@@ -14,19 +14,19 @@
 ; See the License for the specific language governing permissions and
 ; limitations under the License.
 
-(ns dda.pallet.dda-tomcat-crate.domain
+(ns dda.pallet.dda-tomcat-crate.domain-test
   (:require
-   [schema.core :as s]
-   [dda.pallet.dda-tomcat-crate.infra :as infra]
-   [dda.pallet.dda-tomcat-crate.domain.liferay :as lr]))
+    [schema.core :as s]
+    [clojure.test :refer :all]
+    [dda.pallet.dda-tomcat-crate.domain :as sut]))
 
-(def DomainConfig
-  "Represents all possible domain configurations."
-  (s/either
-    lr/LR6
-    lr/LR7))
-
-(s/defn ^:always-validate
-  infra-configuration :- infra/InfraResult
-  [domain-config :- DomainConfig]
-  (lr/infra-configuration domain-config))
+(deftest domain-validation-test
+  (testing
+    "test the domain spec"
+      (is
+        (s/validate sut/DomainConfig
+                    {:lr-6x {:xmx-megabbyte 2560
+                             :lr-home "/var/lib/liferay/"}}))
+      (is
+        (s/validate sut/DomainConfig
+                    {:lr-7x {}}))))

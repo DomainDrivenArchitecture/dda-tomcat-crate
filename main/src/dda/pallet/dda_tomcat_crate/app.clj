@@ -39,6 +39,13 @@
    {s/Keyword InfraResult}})
 
 (s/defn ^:always-validate
+  tomcat-group-spec
+  [app-config :- AppConfig]
+  (group/group-spec
+    app-config [(config-crate/with-config app-config)
+                with-tomcat]))
+
+(s/defn ^:always-validate
   load-targets :- Targets
   [file-name :- s/Str]
   (existing/load-targets file-name))
@@ -50,22 +57,15 @@
 
 (s/defn ^:always-validate
   app-configuration :- AppConfig
-  [domain-config :- domain/DomainConfig & options]
+  [domain-config :- DomainConfig & options]
  (let [{:keys [group-key] :or {group-key infra/facility}} options]
   {:group-specific-config
      {group-key (domain/infra-configuration domain-config)}}))
 
 (s/defn ^:always-validate
-  tomcat-group-spec
-  [app-config :- AppConfig]
-  (group/group-spec
-    app-config [(config-crate/with-config app-config)
-                with-tomcat]))
-
-(s/defn ^:always-validate
   existing-provisioning-spec
   "Creates an integrated group spec from a domain config and a provisioning user."
-  [domain-config :- domain/DomainConfig
+  [domain-config :- DomainConfig
    provisioning-user :- ProvisioningUser]
   (merge
     (tomcat-group-spec (app-configuration domain-config))

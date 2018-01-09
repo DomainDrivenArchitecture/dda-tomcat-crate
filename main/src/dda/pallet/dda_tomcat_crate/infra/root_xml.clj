@@ -18,11 +18,10 @@
   (:require
     [schema.core :as s]
     [clojure.string :as string]
-    [pallet.actions :as actions]
-    [dda.config.commons.directory-model :as dir-model]))
+    [pallet.actions :as actions]))
 
 (def RootXml
-  {:webapps-root-xml-location dir-model/NonRootDirectory
+  {:webapps-root-xml-location s/Str
    :os-user s/Str
    :lines [s/Str]})
 
