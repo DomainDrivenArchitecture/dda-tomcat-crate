@@ -22,7 +22,8 @@
      [pallet.actions :as actions]))
 
 (def BaseTomcatVmConfig
-  {:os-user s/Str
+  {:tomcat-version (s/enum 7 8)
+   :os-user s/Str
    :java-home s/Str
    :xms s/Str
    :xmx s/Str
@@ -63,9 +64,12 @@
   tomcat-env :- [s/Str]
   "the tomcat default vm generator function."
   [config :- TomcatVmConfig]
-  (let [{:keys [settings]} config]
+  (let [{:keys [settings]} config
+        template-file (cond
+                          (= 7 (:tomcat-version config)) "etc_default_tomcat7.template"
+                          :else "etc_default_tomcat8.template")]
     (string/split
-      (selmer/render-file "etc_default_tomcat7.template"
+      (selmer/render-file template-file
                           (merge
                             config
                             {:java-opts (java-opts config)

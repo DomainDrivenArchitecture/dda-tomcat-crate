@@ -13,7 +13,6 @@
 ; WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 ; See the License for the specific language governing permissions and
 ; limitations under the License.
-
 (ns dda.pallet.dda-tomcat-crate.infra.tomcat-vm-test
   (:require
     [clojure.test :refer :all]
@@ -27,8 +26,9 @@
   (empty? (filter #(= % expected) actual)))
 
 (def setenv-sh-config
-  {:os-user "tomcat7"
-   :java-home "/usr/lib/jvm/java-1.7.0-openjdk-amd64"
+  {:tomcat-version 8
+   :os-user "tomcat8"
+   :java-home "/usr/lib/jvm/java-1.8.0-openjdk-amd64"
    :xms "1m"
    :xmx "2m"
    :max-perm-size "3m"
@@ -36,7 +36,8 @@
    :download {:config-setenv-sh-location ""}})
 
 (def liferay-setenv-sh-config
-  {:os-user "tomcat7"
+  {:tomcat-version 7
+   :os-user "tomcat7"
    :java-home "/usr/lib/jvm/java-1.6.0-openjdk-amd64"
    :xms "1536m"
    :xmx "2560m"
@@ -63,10 +64,13 @@
 (deftest test-setenv-sh-config
   (testing
     (is (has?
+          "TOMCAT8_USER=tomcat8"
+          (sut/tomcat-env setenv-sh-config)))
+    (is (has?
           "JAVA_OPTS=\"-Djava.awt.headless=true -server -Dfile.encoding=UTF8 -Xms1m -Xmx2m -XX:MaxPermSize=3m\""
           (sut/tomcat-env setenv-sh-config)))
     (is (has?
-          "#TOMCAT7_SECURITY=no"
+          "#TOMCAT8_SECURITY=no"
           (sut/tomcat-env setenv-sh-config)))
     (is (hasnt?
           "CATALINA_OPTS=\"\""
@@ -75,21 +79,11 @@
 (deftest test-liferay-setenv-sh-config
   (testing
     (is (has?
+          "TOMCAT7_USER=tomcat7"
+          (sut/tomcat-env liferay-setenv-sh-config)))
+    (is (has?
           "TOMCAT7_SECURITY=no"
           (sut/tomcat-env liferay-setenv-sh-config)))
     (is (hasnt?
           "CATALINA_OPTS=\"-Dcustom.lr.dir=/var/lib/liferay\""
           (sut/tomcat-env liferay-setenv-sh-config)))))
-
-(def expected-liferay-setenv-sh-lines
-  ["TOMCAT7_USER=tomcat7"
-   "TOMCAT7_GROUP=tomcat7"
-   "JAVA_HOME=/usr/lib/jvm/java-1.6.0-openjdk-amd64"
-   (str "JAVA_OPTS=\"${JAVA_OPTS} -server -Dfile.encoding=UTF8"
-        " -Djava.net.preferIPv4Stack=true"
-        " -Dorg.apache.catalina.loader.WebappClassLoader.ENABLE_CLEAR_REFERENCES=false"
-        " -Duser.timezone=GMT -Xms1536m -Xmx2560m -XX:MaxPermSize=512m"
-        " -XX:+UseConcMarkSweepGC\"")
-   "#JAVA_OPTS=\"${JAVA_OPTS} -Xdebug -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n\""
-   "CATALINA_OPTS=\"-Dcustom.lr.dir=/var/lib/liferay\""
-   "TOMCAT7_SECURITY=no"])

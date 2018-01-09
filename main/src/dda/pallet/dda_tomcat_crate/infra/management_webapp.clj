@@ -26,10 +26,10 @@
    :os-user s/Str})
 
 ;TODO version depending
-(defn var-lib-tomcat7-webapps-ROOT-index-html []
+(defn var-lib-tomcat-webapps-ROOT-index-html []
   (selmer/render-file "index.html.template" {}))
 
-(defn var-lib-tomcat7-webapps-ROOT-META-INF-context-xml []
+(defn var-lib-tomcat-webapps-ROOT-META-INF-context-xml []
   (selmer/render-file "context.xml.template" {}))
 
 (s/defn remove-manager-webapps
@@ -50,9 +50,9 @@
       (str webapps-location "/ROOT/index.html")
       :owner os-user :group os-user
       :mode "644" :literal true
-      :content (var-lib-tomcat7-webapps-ROOT-index-html))
+      :content (var-lib-tomcat-webapps-ROOT-index-html))
     (actions/remote-file
       (str webapps-location "/ROOT/META-INF/context.xml")
       :owner os-user :group os-user
       :mode "644" :literal true
-      :content (var-lib-tomcat7-webapps-ROOT-META-INF-context-xml))))
+      :content (var-lib-tomcat-webapps-ROOT-META-INF-context-xml))))

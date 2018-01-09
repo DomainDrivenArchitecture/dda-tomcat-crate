@@ -25,7 +25,8 @@
            :lr-home dir-model/NonRootDirectory}}) ; e.g. /var/lib/liferay
 
 (def LR7
-  {:lr-7x {}})
+  {:lr-7x {:xmx-megabbyte s/Num                   ; e.g. 6072 or 2560
+           :lr-home dir-model/NonRootDirectory}}) ; e.g. /var/lib/liferay}})
 
 (def DomainConfig
   "Represents the tomcat for liferay configuration."
@@ -34,12 +35,49 @@
     LR7))
 
 (s/defn
+  lr-7x-infra-configuration :- infra/InfraResult
+  [domain-config :- LR6]
+  (let [{:keys [xmx-megabbyte lr-home]} domain-config]
+   {infra/facility
+    {:server-xml
+      {:tomcat-version 8
+       :shutdown-port "8005"
+       :start-ssl true
+       :executor-daemon "false"
+       :executor-min-spare-threads "48"
+       :executor-max-threads "151"
+       :service-name "Catalina"
+       :connector-port "8009"
+       :connector-protocol "AJP/1.3"
+       :connection-timeout "61000"
+       :uri-encoding "UTF-8"
+       :config-server-xml-location "/etc/tomcat8/server.xml"
+       :os-user "tomcat8"}
+     :tomct-vm
+      {:tomcat-version 8
+       :managed {:config-default-location "/etc/default/tomcat8"}
+       :settings #{:prefer-ipv4 :disable-cl-clear-ref
+                   :conc-mark-sweep-gc :timezone-gmt
+                   :disable-tomcat-security}
+       :xmx (str xmx-megabbyte "m")
+       :xms "1536m"
+       :max-perm-size "512m"
+       :os-user "tomcat8"
+       :java-home "/usr/lib/jvm/java-1.8.0-openjdk-amd64"
+       :catalina-opts (str "-Dcustom.lr.dir=" lr-home)}
+     :java
+      {:java-version 8}
+     :tomcat-source
+      {:tomcat-managed {:package-name "tomcat8"}}}}))
+
+(s/defn
   lr-6x-infra-configuration :- infra/InfraResult
   [domain-config :- LR6]
   (let [{:keys [xmx-megabbyte lr-home]} domain-config]
    {infra/facility
     {:server-xml
-      {:shutdown-port "8005"
+      {:tomcat-version 7
+       :shutdown-port "8005"
        :start-ssl true
        :executor-daemon "false"
        :executor-min-spare-threads "48"
@@ -72,6 +110,8 @@
 (s/defn
   infra-configuration :- infra/InfraResult
   [domain-config :- DomainConfig]
-  (let [{:keys [lr-6x lr7x]} domain-config]
+  (let [{:keys [lr-6x lr-7x]} domain-config]
     (when (contains? domain-config :lr-6x)
-      (lr-6x-infra-configuration lr-6x))))
+      (lr-6x-infra-configuration lr-6x))
+    (when (contains? domain-config :lr-7x)
+      (lr-6x-infra-configuration lr-7x))))

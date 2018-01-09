@@ -26,8 +26,9 @@
   (empty? (filter #(= % expected) actual)))
 
 (def server-xml-config
-  {:config-server-xml-location ""
-   :os-user ""
+  {:tomcat-version 8
+   :config-server-xml-location ""
+   :os-user "tomcat8"
    :shutdown-port "8005"
    :start-ssl false
    :executor-daemon "true"
@@ -40,7 +41,8 @@
    :uri-encoding "UTF-8"})
 
 (def server-xml-config-wo-url-encoding
-  {:config-server-xml-location ""
+  {:tomcat-version 8
+   :config-server-xml-location ""
    :os-user ""
    :shutdown-port "8005"
    :start-ssl false
@@ -53,7 +55,8 @@
    :connection-timeout "20000"})
 
 (def server-xml-config-ajp
-  {:config-server-xml-location ""
+  {:tomcat-version 7
+   :config-server-xml-location ""
    :os-user ""
    :shutdown-port "8005"
    :start-ssl true

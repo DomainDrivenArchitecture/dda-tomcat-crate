@@ -29,4 +29,8 @@
                              :lr-home "/var/lib/liferay/"}}))
       (is
         (s/validate sut/DomainConfig
-                    {:lr-7x {}}))))
+                    {:lr-7x {:xmx-megabbyte 2560
+                             :lr-home "/var/lib/liferay/"}}))
+      (is
+        (s/validate sut/DomainConfig
+                    {:standalone {:xmx-megabbyte 2560}}))))

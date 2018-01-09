@@ -14,7 +14,7 @@
 ; See the License for the specific language governing permissions and
 ; limitations under the License.
 
-(ns dda.pallet.dda-tomcat-crate.domain
+(ns dda.pallet.dda-tomcat-crate.domain.download
   (:require
    [schema.core :as s]
    [dda.pallet.dda-tomcat-crate.infra :as infra]))
@@ -65,7 +65,8 @@
                       "/some/custom/tomcat-home/conf/")]
    {infra/facility
     {:server-xml
-      {:shutdown-port "8005"
+      {:tomcat-version 8
+       :shutdown-port "8005"
        :start-ssl false
        :executor-daemon "true"
        :executor-min-spare-threads "4"
@@ -79,6 +80,7 @@
        :os-user "tomcat7"}
      :tomct-vm
       {:managed {:config-default-location "/etc/default/tomcat7"}
+       :tomcat-version 8
        :settings #{}
        :xmx "512m"
        :xms "512m"

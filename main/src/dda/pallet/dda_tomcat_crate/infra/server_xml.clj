@@ -21,7 +21,8 @@
      [pallet.actions :as actions]))
 
 (def ServerXmlConfig
-  {:config-server-xml-location s/Str
+  {:tomcat-version (s/enum 7 8)
+   :config-server-xml-location s/Str
    :os-user s/Str
    :shutdown-port s/Str
    :start-ssl s/Bool
@@ -38,12 +39,15 @@
   server-xml :- [s/Str]
   "the server-xml generator function."
   [config :- ServerXmlConfig]
-  (string/split
-    (selmer/render-file "etc_tomcat7_server.xml.template"
-                        (merge
-                          config
-                          {:contains-uri-encode? (contains? config :uri-encoding)}))
-    #"\n"))
+  (let [template-file (cond
+                          (= 7 (:tomcat-version config)) "etc_tomcat7_server.xml.template"
+                          :else "etc_tomcat8_server.xml.template")]
+    (string/split
+      (selmer/render-file template-file
+                          (merge
+                            config
+                            {:contains-uri-encode? (contains? config :uri-encoding)}))
+      #"\n")))
 
 (s/defn configure-server-xml
   [config :- ServerXmlConfig]

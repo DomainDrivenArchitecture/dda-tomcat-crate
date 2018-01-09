@@ -18,13 +18,15 @@
   (:require
    [schema.core :as s]
    [dda.pallet.dda-tomcat-crate.infra :as infra]
-   [dda.pallet.dda-tomcat-crate.domain.liferay :as lr]))
+   [dda.pallet.dda-tomcat-crate.domain.liferay :as lr]
+   [dda.pallet.dda-tomcat-crate.domain.standalone :as standalone]))
 
 (def DomainConfig
   "Represents all possible domain configurations."
   (s/either
     lr/LR6
-    lr/LR7))
+    lr/LR7
+    standalone/DomainConfig))
 
 (s/defn ^:always-validate
   infra-configuration :- infra/InfraResult
