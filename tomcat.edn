@@ -1,1 +1,1 @@
-{}
+{:standalone {:tomcat-version 8}}
