@@ -20,6 +20,12 @@
     [schema.core :as s]
     [dda.pallet.dda-tomcat-crate.infra.tomcat-vm :as sut]))
 
+(defn has? [expected actual]
+  (not (empty? (filter #(= % expected) actual))))
+
+(defn hasnt? [expected actual]
+  (empty? (filter #(= % expected) actual)))
+
 (def setenv-sh-config
   {:os-user "tomcat7"
    :java-home "/usr/lib/jvm/java-1.7.0-openjdk-amd64"
@@ -40,13 +46,40 @@
    :download {:config-setenv-sh-location ""}
    :catalina-opts "-Dcustom.lr.dir=/var/lib/liferay"})
 
-(def expected-setenv-sh-lines
-  ["TOMCAT7_USER=tomcat7"
-   "TOMCAT7_GROUP=tomcat7"
-   "JAVA_HOME=/usr/lib/jvm/java-1.7.0-openjdk-amd64"
-   (str "JAVA_OPTS=\"${JAVA_OPTS} -server -Dfile.encoding=UTF8 "
-        "-Xms1m -Xmx2m -XX:MaxPermSize=3m\"")
-   "#JAVA_OPTS=\"${JAVA_OPTS} -Xdebug -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n\""])
+(deftest test-validity
+  (testing
+    (is
+      (s/validate sut/TomcatVmConfig setenv-sh-config))
+    (is
+      (s/validate sut/TomcatVmConfig liferay-setenv-sh-config))))
+
+(deftest test-java-opts
+  (testing
+    (is (= "-Xms1m -Xmx2m -XX:MaxPermSize=3m"
+          (sut/java-opts setenv-sh-config)))
+    (is (= "-Djava.net.preferIPv4Stack=true -Dorg.apache.catalina.loader.WebappClassLoader.ENABLE_CLEAR_REFERENCES=false -Duser.timezone=GMT -Xms1536m -Xmx2560m -XX:MaxPermSize=512m -XX:+UseConcMarkSweepGC"
+          (sut/java-opts liferay-setenv-sh-config)))))
+
+(deftest test-setenv-sh-config
+  (testing
+    (is (has?
+          "JAVA_OPTS=\"-Djava.awt.headless=true -server -Dfile.encoding=UTF8 -Xms1m -Xmx2m -XX:MaxPermSize=3m\""
+          (sut/tomcat-env setenv-sh-config)))
+    (is (has?
+          "#TOMCAT7_SECURITY=no"
+          (sut/tomcat-env setenv-sh-config)))
+    (is (hasnt?
+          "CATALINA_OPTS=\"\""
+          (sut/tomcat-env setenv-sh-config)))))
+
+(deftest test-liferay-setenv-sh-config
+  (testing
+    (is (has?
+          "TOMCAT7_SECURITY=no"
+          (sut/tomcat-env liferay-setenv-sh-config)))
+    (is (hasnt?
+          "CATALINA_OPTS=\"-Dcustom.lr.dir=/var/lib/liferay\""
+          (sut/tomcat-env liferay-setenv-sh-config)))))
 
 (def expected-liferay-setenv-sh-lines
   ["TOMCAT7_USER=tomcat7"
@@ -60,16 +93,3 @@
    "#JAVA_OPTS=\"${JAVA_OPTS} -Xdebug -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n\""
    "CATALINA_OPTS=\"-Dcustom.lr.dir=/var/lib/liferay\""
    "TOMCAT7_SECURITY=no"])
-
-(deftest test-setenv-sh
-  (testing
-    (is
-      (s/validate sut/TomcatVmConfig setenv-sh-config))
-    (is
-      (s/validate sut/TomcatVmConfig liferay-setenv-sh-config))
-    (is
-      (= expected-setenv-sh-lines
-         (sut/tomcat-env setenv-sh-config)))
-    (is
-      (= expected-liferay-setenv-sh-lines
-         (sut/tomcat-env liferay-setenv-sh-config)))))

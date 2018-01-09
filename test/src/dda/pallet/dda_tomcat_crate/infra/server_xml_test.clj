@@ -19,6 +19,12 @@
     [schema.core :as s]
     [dda.pallet.dda-tomcat-crate.infra.server-xml :as sut]))
 
+(defn has? [expected actual]
+  (not (empty? (filter #(= % expected) actual))))
+
+(defn hasnt? [expected actual]
+  (empty? (filter #(= % expected) actual)))
+
 (def server-xml-config
   {:config-server-xml-location ""
    :os-user ""
@@ -71,119 +77,25 @@
 
 (deftest test-server-xml-config
   (testing
-    (is
-      (filter
-        #(= % "<Server port=\"8005\" shutdown=\"SHUTDOWN\">")
-        (sut/server-xml server-xml-config)))
-    (is (empty?
-          (filter
-            #(= % "  <Listener className=\"org.apache.catalina.core.AprLifecycleListener\" SSLEngine=\"on\" />")
-            (sut/server-xml server-xml-config))))
-    (is (filter
-          #(= % "               URIEncoding=\"UTF-8\"")
-          (sut/server-xml server-xml-config)))
-    (is (filter
-          #(= % "               connectionTimeout=\"12345\" />")
-          (sut/server-xml server-xml-config)))))
+    (is (has? "<Server port=\"8005\" shutdown=\"SHUTDOWN\">"
+              (sut/server-xml server-xml-config)))
+    (is (hasnt? "  <Listener className=\"org.apache.catalina.core.AprLifecycleListener\" SSLEngine=\"on\" />"
+                (sut/server-xml server-xml-config)))
+    (is (has? "               URIEncoding=\"UTF-8\""
+              (sut/server-xml server-xml-config)))
+    (is (has? "               connectionTimeout=\"12345\" />"
+              (sut/server-xml server-xml-config)))))
 
 (deftest test-server-xml-config-wo-url-encoding
   (testing
-    (is (empty?
-          (filter
-            #(= % "               URIEncoding=\"UTF-8\"")
-            (sut/server-xml server-xml-config))))))
+    (is (hasnt?  "               URIEncoding=\"UTF-8\""
+                 (sut/server-xml server-xml-config-wo-url-encoding)))))
 
 (deftest test-server-server-xml-config-ajp
   (testing
-    (is (filter
-          #(= % "  <Listener className=\"org.apache.catalina.core.AprLifecycleListener\" SSLEngine=\"on\" />")
-          (sut/server-xml server-xml-config-ajp)))
-    (is
-      (filter
-        #(= % "    <Connector executor=\"tomcatThreadPool\" port=\"8009\" protocol=\"AJP/1.3\"")
-         (sut/server-xml server-xml-config-ajp)))))
-
-(def expected-server-xml-lines
-  ["<?xml version='1.0' encoding='utf-8'?>"
-   "<Server port=\"8005\" shutdown=\"SHUTDOWN\">"
-   "  <Listener className=\"org.apache.catalina.core.JasperListener\" />"
-   "  <Listener className=\"org.apache.catalina.core.JreMemoryLeakPreventionListener\" />"
-   "  <Listener className=\"org.apache.catalina.mbeans.GlobalResourcesLifecycleListener\" />"
-   "  <Listener className=\"org.apache.catalina.core.ThreadLocalLeakPreventionListener\" />"
-   ""
-   "  <GlobalNamingResources>"
-   "    <Resource name=\"UserDatabase\" auth=\"Container\""
-   "              type=\"org.apache.catalina.UserDatabase\""
-   "              description=\"User database that can be updated and saved\""
-   "              factory=\"org.apache.catalina.users.MemoryUserDatabaseFactory\""
-   "              pathname=\"conf/tomcat-users.xml\" />"
-   "  </GlobalNamingResources>"
-   ""
-   "  <Service name=\"Catalina\">"
-   ""
-   "    <Executor name=\"tomcatThreadPool\" namePrefix=\"catalina-exec-\""
-   "        daemon=\"true\" maxThreads=\"152\" minSpareThreads=\"4\"/>"
-   ""
-   "    <Connector executor=\"tomcatThreadPool\" port=\"8080\" protocol=\"HTTP/1.1\""
-   "               connectionTimeout=\"20000\" URIEncoding=\"UTF-8\" />"
-   ""
-   "    <Engine name=\"Catalina\" defaultHost=\"localhost\">"
-   ""
-   "      <Realm className=\"org.apache.catalina.realm.LockOutRealm\"/>"
-   "      <Realm className=\"org.apache.catalina.realm.UserDatabaseRealm\""
-   "             resourceName=\"UserDatabase\"/>"
-   ""
-   "      <Host name=\"localhost\"  appBase=\"webapps\""
-   "            unpackWARs=\"true\" autoDeploy=\"true\">"
-   ""
-   "      <Valve className=\"org.apache.catalina.valves.AccessLogValve\" directory=\"logs\""
-   "            pattern=\"%h %l %u %t &quot;%r&quot; %s %b %D %S\""
-   "            prefix=\"localhost_access_log.\" suffix=\".txt\""
-   "            resolveHosts=\"false\"/>"
-   "      </Host>"
-   "    </Engine>"
-   "  </Service>"
-   "</Server>"])
-
-(def expected-server-xml-lines-ajp
-  ["<?xml version='1.0' encoding='utf-8'?>"
-    "<Server port=\"8005\" shutdown=\"SHUTDOWN\">"
-    "  <Listener className=\"org.apache.catalina.core.AprLifecycleListener\" SSLEngine=\"on\" />"
-    "  <Listener className=\"org.apache.catalina.core.JasperListener\" />"
-    "  <Listener className=\"org.apache.catalina.core.JreMemoryLeakPreventionListener\" />"
-    "  <Listener className=\"org.apache.catalina.mbeans.GlobalResourcesLifecycleListener\" />"
-    "  <Listener className=\"org.apache.catalina.core.ThreadLocalLeakPreventionListener\" />"
-    ""
-    "  <GlobalNamingResources>"
-    "    <Resource name=\"UserDatabase\" auth=\"Container\""
-    "              type=\"org.apache.catalina.UserDatabase\""
-    "              description=\"User database that can be updated and saved\""
-    "              factory=\"org.apache.catalina.users.MemoryUserDatabaseFactory\""
-    "              pathname=\"conf/tomcat-users.xml\" />"
-    "  </GlobalNamingResources>"
-    ""
-    "  <Service name=\"Catalina\">"
-    ""
-    "    <Executor name=\"tomcatThreadPool\" namePrefix=\"catalina-exec-\""
-    "        daemon=\"false\" maxThreads=\"152\" minSpareThreads=\"4\"/>"
-    ""
-    "    <Connector executor=\"tomcatThreadPool\" port=\"8009\" protocol=\"AJP/1.3\""
-    "               connectionTimeout=\"20000\" URIEncoding=\"UTF-8\" />"
-    ""
-    "    <Engine name=\"Catalina\" defaultHost=\"localhost\">"
-    ""
-    "      <Realm className=\"org.apache.catalina.realm.LockOutRealm\"/>"
-    "      <Realm className=\"org.apache.catalina.realm.UserDatabaseRealm\""
-    "             resourceName=\"UserDatabase\"/>"
-    ""
-    "      <Host name=\"localhost\"  appBase=\"webapps\""
-    "            unpackWARs=\"true\" autoDeploy=\"true\">"
-    ""
-    "      <Valve className=\"org.apache.catalina.valves.AccessLogValve\" directory=\"logs\""
-    "            pattern=\"%h %l %u %t &quot;%r&quot; %s %b %D %S\""
-    "            prefix=\"localhost_access_log.\" suffix=\".txt\""
-    "            resolveHosts=\"false\"/>"
-    "      </Host>"
-    "    </Engine>"
-    "  </Service>"
-    "</Server>"])
+    (is (has? "  <Listener className=\"org.apache.catalina.core.AprLifecycleListener\" SSLEngine=\"on\" />"
+              (sut/server-xml server-xml-config-ajp)))
+    (is (has? "               port=\"8009\""
+              (sut/server-xml server-xml-config-ajp)))
+    (is (has? "               protocol=\"AJP/1.3\""
+              (sut/server-xml server-xml-config-ajp)))))

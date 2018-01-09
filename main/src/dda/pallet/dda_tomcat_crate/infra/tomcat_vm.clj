@@ -17,6 +17,7 @@
 (ns dda.pallet.dda-tomcat-crate.infra.tomcat-vm
    (:require
      [clojure.string :as string]
+     [selmer.parser :as selmer]
      [schema.core :as s]
      [pallet.actions :as actions]))
 
@@ -40,38 +41,37 @@
       BaseTomcatVmConfig
       {:managed {:config-default-location s/Str}})))
 
-; todo: version-spec
+(s/defn
+  java-opts :- s/Str
+  "builds the java opts string."
+  [config :- TomcatVmConfig]
+  (let [{:keys [xms xmx max-perm-size settings]} config]
+    (str
+      (when (contains? settings :prefer-ipv4)
+        "-Djava.net.preferIPv4Stack=true ")
+      (when (contains? settings :disable-cl-clear-ref)
+        "-Dorg.apache.catalina.loader.WebappClassLoader.ENABLE_CLEAR_REFERENCES=false ")
+      (when (contains? settings :timezone-gmt)
+        "-Duser.timezone=GMT ")
+      "-Xms" xms
+      " -Xmx" xmx
+      " -XX:MaxPermSize=" max-perm-size
+      (when (contains? settings :conc-mark-sweep-gc)
+       " -XX:+UseConcMarkSweepGC"))))
+
 (s/defn
   tomcat-env :- [s/Str]
+  "the tomcat default vm generator function."
   [config :- TomcatVmConfig]
-  (let [{:keys [os-user java-home xms xmx max-perm-size settings
-                catalina-opts]} config]
-    (into
-      []
-      (concat
-        [(str "TOMCAT7_USER=" os-user)
-         (str "TOMCAT7_GROUP=" os-user)
-         (str "JAVA_HOME=" java-home)
-         (str "JAVA_OPTS=\"${JAVA_OPTS}"
-              " -server"
-              " -Dfile.encoding=UTF8"
-              (when (contains? settings :prefer-ipv4)
-                " -Djava.net.preferIPv4Stack=true")
-              (when (contains? settings :disable-cl-clear-ref)
-                " -Dorg.apache.catalina.loader.WebappClassLoader.ENABLE_CLEAR_REFERENCES=false")
-              (when (contains? settings :timezone-gmt)
-                " -Duser.timezone=GMT")
-              " -Xms" xms
-              " -Xmx" xmx
-              " -XX:MaxPermSize=" max-perm-size
-              (when (contains? settings :conc-mark-sweep-gc)
-               " -XX:+UseConcMarkSweepGC")
-              "\"")
-         "#JAVA_OPTS=\"${JAVA_OPTS} -Xdebug -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n\""]
-        (when (contains? config :catalina-opts)
-          [(str "CATALINA_OPTS=\"" catalina-opts "\"")])
-        (when (contains? settings :disable-tomcat-security)
-          ["TOMCAT7_SECURITY=no"])))))
+  (let [{:keys [settings]} config]
+    (string/split
+      (selmer/render-file "etc_default_tomcat7.template"
+                          (merge
+                            config
+                            {:java-opts (java-opts config)
+                             :contains-catalina-opts? (contains? config :catalina-opts)
+                             :wo-tomcat-security? (contains? settings :disable-tomcat-security)}))
+      #"\n")))
 
 (s/defn configure-tomcat-vm
   [config :- TomcatVmConfig]

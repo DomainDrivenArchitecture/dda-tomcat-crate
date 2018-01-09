@@ -34,7 +34,8 @@
    :connection-timeout s/Str
    (s/optional-key :uri-encoding) s/Str})
 
-(s/defn server-xml
+(s/defn
+  server-xml :- [s/Str]
   "the server-xml generator function."
   [config :- ServerXmlConfig]
   (string/split
