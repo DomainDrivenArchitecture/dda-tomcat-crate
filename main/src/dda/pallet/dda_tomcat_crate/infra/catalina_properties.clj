@@ -22,7 +22,7 @@
     [dda.config.commons.directory-model :as dir-model]))
 
 (def CatalinaProperties
-  {:config-catalina-properties-location dir-model/NonRootDirectory
+  {:config-catalina-properties-location s/Str
    :os-user s/Str
    :lines [s/Str]})
 

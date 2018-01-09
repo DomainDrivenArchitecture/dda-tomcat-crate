@@ -213,16 +213,16 @@
        :config-server-xml-location "/etc/tomcat8/server.xml"
        :os-user "tomcat8"}
      :tomct-vm
-      {:tomcat-version 8
-       :managed {:config-default-location "/etc/default/tomcat8"}
+      {:managed {:config-default-location "/etc/default/tomcat8"}
+       :tomcat-version 8
+       :os-user "tomcat8"
+       :java-home "/usr/lib/jvm/java-1.8.0-openjdk-amd64"
+       :xms "1536m"
+       :xmx (str xmx-megabbyte "m")
+       :max-perm-size "512m"
        :settings #{:prefer-ipv4 :disable-cl-clear-ref
                    :conc-mark-sweep-gc :timezone-gmt
                    :disable-tomcat-security}
-       :xmx (str xmx-megabbyte "m")
-       :xms "1536m"
-       :max-perm-size "512m"
-       :os-user "tomcat8"
-       :java-home "/usr/lib/jvm/java-1.8.0-openjdk-amd64"
        :catalina-opts (str "-Dcustom.lr.dir=" lr-home)}
      :java
       {:java-version 8}
@@ -249,7 +249,8 @@
        :config-server-xml-location "/etc/tomcat7/server.xml"
        :os-user os-user}
      :tomct-vm
-      {:managed {:config-default-location "/etc/default/tomcat7"}
+      {:tomcat-version 7
+       :managed {:config-default-location "/etc/default/tomcat7"}
        :settings #{:prefer-ipv4 :disable-cl-clear-ref
                    :conc-mark-sweep-gc :timezone-gmt
                    :disable-tomcat-security}
@@ -276,7 +277,8 @@
   infra-configuration :- infra/InfraResult
   [domain-config :- DomainConfig]
   (let [{:keys [lr-6x lr-7x]} domain-config]
-    (when (contains? domain-config :lr-6x)
-      (lr-6x-infra-configuration lr-6x))
-    (when (contains? domain-config :lr-7x)
-      (lr-6x-infra-configuration lr-7x))))
+    (cond
+      (contains? domain-config :lr-6x)
+      (lr-6x-infra-configuration lr-6x)
+      :else
+      (lr-7x-infra-configuration lr-7x))))

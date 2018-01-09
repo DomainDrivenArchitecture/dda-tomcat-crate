@@ -33,7 +33,7 @@
    :xmx "2m"
    :max-perm-size "3m"
    :settings #{}
-   :download {:config-setenv-sh-location ""}})
+   :managed {:config-default-location "/etc/default/tomcat8"}})
 
 (def liferay-setenv-sh-config
   {:tomcat-version 7
