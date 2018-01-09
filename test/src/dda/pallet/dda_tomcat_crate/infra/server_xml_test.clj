@@ -21,6 +21,7 @@
 
 (def server-xml-config
   {:config-server-xml-location ""
+   :os-user ""
    :shutdown-port "8005"
    :start-ssl false
    :executor-daemon "true"
@@ -34,6 +35,7 @@
 
 (def server-xml-config-wo-url-encoding
   {:config-server-xml-location ""
+   :os-user ""
    :shutdown-port "8005"
    :start-ssl false
    :executor-daemon "true"
@@ -46,6 +48,7 @@
 
 (def server-xml-config-ajp
   {:config-server-xml-location ""
+   :os-user ""
    :shutdown-port "8005"
    :start-ssl true
    :executor-daemon "false"

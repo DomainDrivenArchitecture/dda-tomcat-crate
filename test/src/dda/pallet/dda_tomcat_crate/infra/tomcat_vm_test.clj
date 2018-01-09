@@ -27,7 +27,7 @@
    :xmx "2m"
    :max-perm-size "3m"
    :settings #{}
-   :custom {:config-setenv-sh-location ""}})
+   :download {:config-setenv-sh-location ""}})
 
 (def liferay-setenv-sh-config
   {:os-user "tomcat7"
@@ -37,7 +37,7 @@
    :max-perm-size "512m"
    :settings #{:prefer-ipv4 :disable-cl-clear-ref :conc-mark-sweep-gc
                :disable-tomcat-security :timezone-gmt}
-   :custom {:config-setenv-sh-location ""}
+   :download {:config-setenv-sh-location ""}
    :catalina-opts "-Dcustom.lr.dir=/var/lib/liferay"})
 
 (def expected-setenv-sh-lines
