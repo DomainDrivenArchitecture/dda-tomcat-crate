@@ -266,10 +266,10 @@
      :tomcat-source
       {:tomcat-managed {:package-name "tomcat7"}}
      :catalina-properties {:os-user os-user
-                           :config-catalina-properties-location tomcat-home-dir
+                           :config-catalina-properties-location "/etc/tomcat7/catalina.properties"
                            :lines etc-tomcat7-catalina-properties-lines}
      :root-xml {:os-user os-user
-                :webapps-root-xml-location tomcat-home-dir
+                :webapps-root-xml-location "/etc/tomcat7/Catalina/localhost/ROOT.xml"
                 :lines etc-tomcat7-Catalina-localhost-ROOT-xml}}}))
 
 (s/defn
