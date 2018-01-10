@@ -23,13 +23,15 @@
    [dda.pallet.dda-tomcat-crate.infra.root-xml :as root-xml]))
 
 ; -------------------  schemas  ---------------------
+(def LrCommon
+  {:xmx-megabbyte s/Num                   ; e.g. 6072 or 2560
+   :lr-home dir-model/NonRootDirectory}) ; e.g. /var/lib/liferay
+
 (def LR6
-  {:lr-6x {:xmx-megabbyte s/Num                   ; e.g. 6072 or 2560
-           :lr-home dir-model/NonRootDirectory}}) ; e.g. /var/lib/liferay
+  {:lr-6x LrCommon})
 
 (def LR7
-  {:lr-7x {:xmx-megabbyte s/Num                   ; e.g. 6072 or 2560
-           :lr-home dir-model/NonRootDirectory}}) ; e.g. /var/lib/liferay}})
+  {:lr-7x LrCommon})
 
 (def DomainConfig
   "Represents the tomcat for liferay configuration."
