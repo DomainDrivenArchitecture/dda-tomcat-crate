@@ -20,10 +20,8 @@
      Documentation at /docs/config/server.html
  -->
 <Server port="{{shutdown-port}}" shutdown="SHUTDOWN">
-{% if start-ssl %}
+  <Listener className="org.apache.catalina.startup.VersionLoggerListener" />{% if start-ssl %}
   <Listener className="org.apache.catalina.core.AprLifecycleListener" SSLEngine="on" />{% endif %}
-  <Listener className="org.apache.catalina.startup.VersionLoggerListener" />
-  <Listener className="org.apache.catalina.security.SecurityListener" />
   <Listener className="org.apache.catalina.core.JreMemoryLeakPreventionListener" />
   <Listener className="org.apache.catalina.mbeans.GlobalResourcesLifecycleListener" />
   <Listener className="org.apache.catalina.core.ThreadLocalLeakPreventionListener" />
