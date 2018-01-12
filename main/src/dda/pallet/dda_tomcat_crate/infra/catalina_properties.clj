@@ -32,7 +32,7 @@
   [config :- CatalinaProperties]
   (let [template-file (cond
                           (= 7 (:tomcat-version config)) "etc_tomcat7_catalina.properties.template"
-                          :else "tc_tomcat8_catalina.properties.template")]
+                          :else "etc_tomcat8_catalina.properties.template")]
     (string/split
       (selmer/render-file template-file config)
       #"\n")))
