@@ -26,8 +26,7 @@
   {:catalina-policy-location s/Str
    :os-user s/Str})
 
-(s/defn catalina-policy
-  []
+(s/defn catalina-policy []
   (let [template-file "etc_tomcat_catalina.policy"]
     (string/split
       (selmer/render-file template-file {})
