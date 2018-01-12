@@ -26,6 +26,7 @@
     [dda.pallet.dda-tomcat-crate.infra.server-xml :as server-xml]
     [dda.pallet.dda-tomcat-crate.infra.root-xml :as root-xml]
     [dda.pallet.dda-tomcat-crate.infra.catalina-properties :as catalina-properties]
+    [dda.pallet.dda-tomcat-crate.infra.catalina-policy :as catalina-policy]
     [dda.pallet.dda-tomcat-crate.infra.management-webapp :as mgm-webapp]))
 
 (def facility :dda-tomcat)
@@ -38,6 +39,7 @@
    :server-xml server-xml/ServerXmlConfig
    (s/optional-key :remove-manager-webapps) mgm-webapp/ManagementWebapp
    (s/optional-key :catalina-properties) catalina-properties/CatalinaProperties
+   (s/optional-key :catalina-policy) catalina-policy/CatalinaPolicy
    (s/optional-key :root-xml) root-xml/RootXml})
 
 (def InfraResult {facility TomcatConfig})
@@ -56,11 +58,13 @@
   configure
   "configure function for httpd-crate."
   [config :- TomcatConfig]
-  (let [{:keys [tomct-vm server-xml catalina-properties root-xml]} config]
+  (let [{:keys [tomct-vm server-xml catalina-properties catalina-policy root-xml]} config]
     (server-xml/configure-server-xml server-xml)
     (tomcat-vm/configure-tomcat-vm tomct-vm)
     (when (contains? config :catalina-properties)
       (catalina-properties/configure-catalina-properties catalina-properties))
+    (when (contains? config :catalina-policy)
+      (catalina-policy/configure-catalina-policy catalina-policy))
     (when (contains? config :root-xml)
       (root-xml/root-xml root-xml))))
 

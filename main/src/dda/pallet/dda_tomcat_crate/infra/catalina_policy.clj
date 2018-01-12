@@ -14,7 +14,7 @@
 ; See the License for the specific language governing permissions and
 ; limitations under the License.
 
-(ns dda.pallet.dda-tomcat-crate.infra.catalina-properties
+(ns dda.pallet.dda-tomcat-crate.infra.catalina-policy
   (:require
     [clojure.string :as string]
     [schema.core :as s]
@@ -22,28 +22,23 @@
     [pallet.actions :as actions]
     [dda.config.commons.directory-model :as dir-model]))
 
-(def CatalinaProperties
-  {:tomcat-version (s/enum 7 8)
-   :config-catalina-properties-location s/Str
-   :os-user s/Str
-   :common-loader s/Str})
+(def CatalinaPolicy
+  {:catalina-policy-location s/Str
+   :os-user s/Str})
 
-(s/defn catalina-properties
-  [config :- CatalinaProperties]
-  (let [template-file (cond
-                          (= 7 (:tomcat-version config)) "etc_tomcat7_catalina.properties.template"
-                          :else "etc_tomcat8_catalina.properties.template")]
+(s/defn catalina-policy
+  (let [template-file "etc_tomcat_catalina.policy"]
     (string/split
-      (selmer/render-file template-file config)
+      (selmer/render-file template-file {})
       #"\n")))
 
-(s/defn configure-catalina-properties
-  [config :- CatalinaProperties]
-  (let [{:keys [os-user config-catalina-properties-location]} config]
+(s/defn configure-catalina-policy
+  [config :- CatalinaPolicy]
+  (let [{:keys [os-user catalina-policy-location]} config]
     (actions/remote-file
-      config-catalina-properties-location
+      catalina-policy-location
       :owner "root" :group os-user
       :mode "644" :literal true
       :content (string/join
                  \newline
-                 (catalina-properties config)))))
+                 (catalina-policy)))))
