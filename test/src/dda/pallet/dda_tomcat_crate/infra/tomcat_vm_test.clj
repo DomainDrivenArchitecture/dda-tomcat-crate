@@ -84,6 +84,6 @@
     (is (has?
           "TOMCAT7_SECURITY=no"
           (sut/tomcat-env liferay-setenv-sh-config)))
-    (is (hasnt?
+    (is (has?
           "CATALINA_OPTS=\"-Dcustom.lr.dir=/var/lib/liferay\""
           (sut/tomcat-env liferay-setenv-sh-config)))))
