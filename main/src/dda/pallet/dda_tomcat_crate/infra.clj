@@ -60,7 +60,7 @@
     (server-xml/configure-server-xml server-xml)
     (tomcat-vm/configure-tomcat-vm tomct-vm)
     (when (contains? config :catalina-properties)
-      (catalina-properties/catalina-properties catalina-properties))
+      (catalina-properties/configure-catalina-properties catalina-properties))
     (when (contains? config :root-xml)
       (root-xml/root-xml root-xml))))
 

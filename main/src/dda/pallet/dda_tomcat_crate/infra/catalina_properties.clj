@@ -18,15 +18,26 @@
   (:require
     [clojure.string :as string]
     [schema.core :as s]
+    [selmer.parser :as selmer]
     [pallet.actions :as actions]
     [dda.config.commons.directory-model :as dir-model]))
 
 (def CatalinaProperties
-  {:config-catalina-properties-location s/Str
+  {:tomcat-version (s/enum 7 8)
+   :config-catalina-properties-location s/Str
    :os-user s/Str
-   :lines [s/Str]})
+   :common-loader s/Str})
 
 (s/defn catalina-properties
+  [config :- CatalinaProperties]
+  (let [template-file (cond
+                          (= 7 (:tomcat-version config)) "etc_tomcat7_catalina.properties.template"
+                          :else "tc_tomcat8_catalina.properties.template")]
+    (string/split
+      (selmer/render-file template-file config)
+      #"\n")))
+
+(s/defn configure-catalina-properties
   [config :- CatalinaProperties]
   (let [{:keys [os-user config-catalina-properties-location lines]} config]
     (actions/remote-file
@@ -35,4 +46,4 @@
       :mode "644" :literal true
       :content (string/join
                  \newline
-                 lines))))
+                 (catalina-properties config)))))
