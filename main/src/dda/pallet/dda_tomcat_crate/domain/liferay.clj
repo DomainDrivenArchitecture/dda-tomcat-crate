@@ -93,7 +93,7 @@
                            :config-catalina-properties-location "/etc/tomcat8/catalina.properties"
                            :common-loader ",\"/var/lib/liferay/lib/*.jar\""}
      :catalina-policy {:os-user "tomcat8"
-                       :catalina-policy-location "/etc/tomcat8/conf/catalina.policy"}
+                       :catalina-policy-location "/etc/tomcat8/catalina.policy"}
      :root-xml {:os-user "tomcat8"
                 :webapps-root-xml-location "/etc/tomcat8/Catalina/localhost/ROOT.xml"
                 :lines (etc-tomcat-Catalina-localhost-ROOT-xml)}}}))
