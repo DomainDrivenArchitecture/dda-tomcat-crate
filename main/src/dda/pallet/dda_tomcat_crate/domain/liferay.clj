@@ -89,10 +89,10 @@
      :tomcat-source
       {:tomcat-managed {:package-name "tomcat8"}}
      :catalina-properties {:tomcat-version 8
-                           :os-user os-user
+                           :os-user "tomcat8"
                            :config-catalina-properties-location "/etc/tomcat8/catalina.properties"
                            :common-loader ",\"/var/lib/liferay/lib/*.jar\""}
-     :root-xml {:os-user os-user
+     :root-xml {:os-user "tomcat8"
                 :webapps-root-xml-location "/etc/tomcat8/Catalina/localhost/ROOT.xml"
                 :lines (etc-tomcat-Catalina-localhost-ROOT-xml)}}}))
 

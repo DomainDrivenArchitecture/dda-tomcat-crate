@@ -54,7 +54,7 @@
   (let [{:keys [config-server-xml-location os-user]} config]
     (actions/remote-file
       config-server-xml-location
-      :owner os-user
+      :owner "root"
       :group os-user
       :mode "644"
       :literal true

@@ -30,7 +30,7 @@
   (let [{:keys [os-user webapps-root-xml-location lines]} config]
     (actions/remote-file
       webapps-root-xml-location
-      :owner os-user :group os-user
+      :owner "root" :group os-user
       :mode "644" :literal true
       :content (string/join
                  \newline

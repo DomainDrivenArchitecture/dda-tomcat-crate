@@ -42,7 +42,7 @@
   (let [{:keys [os-user config-catalina-properties-location lines]} config]
     (actions/remote-file
       config-catalina-properties-location
-      :owner os-user :group os-user
+      :owner "root" :group os-user
       :mode "644" :literal true
       :content (string/join
                  \newline

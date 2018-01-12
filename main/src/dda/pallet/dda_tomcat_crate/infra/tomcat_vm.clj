@@ -82,7 +82,7 @@
     (when (contains? config :managed)
       (actions/remote-file
         (:config-default-location managed)
-        :owner os-user
+        :owner "root"
         :group os-user
         :mode "644"
         :literal true
@@ -92,8 +92,8 @@
     (when (contains? config :download)
         (actions/remote-file
           (:config-setenv-sh-location download)
-          :owner (:os-user config)
-          :group (:os-user config)
+          :owner os-user
+          :group os-user
           :mode "755"
           :literal true
           :content (string/join
