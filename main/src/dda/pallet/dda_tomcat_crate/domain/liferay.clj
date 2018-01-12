@@ -91,7 +91,7 @@
      :catalina-properties {:tomcat-version 8
                            :os-user "tomcat8"
                            :config-catalina-properties-location "/etc/tomcat8/catalina.properties"
-                           :common-loader ",\"/var/lib/liferay/lib/*.jar\""}
+                           :common-loader "/var/lib/liferay/lib/*.jar"}
      :catalina-policy {:os-user "tomcat8"
                        :catalina-policy-location "/etc/tomcat8/catalina.policy"}
      :root-xml {:os-user "tomcat8"
