@@ -17,6 +17,8 @@
 (ns dda.pallet.dda-tomcat-crate.domain.liferay
   (:require
    [schema.core :as s]
+   [clojure.string :as string]
+   [selmer.parser :as selmer]
    [dda.pallet.dda-tomcat-crate.infra :as infra]
    [dda.config.commons.directory-model :as dir-model]
    [dda.pallet.dda-tomcat-crate.infra.catalina-properties :as catalina-properties]
@@ -44,32 +46,12 @@
 (def tomcat-home-dir "/etc/tomcat7/")
 
 ;this does not neet to be changed for LR7
-(def etc-tomcat7-Catalina-localhost-ROOT-xml
-  ["<Context path=\"\" crossContext=\"true\">"
-   ""
-   "  <!-- JAAS -->"
-   ""
-   "  <!--<Realm"
-   "      className=\"org.apache.catalina.realm.JAASRealm\""
-   "      appName=\"PortalRealm\""
-   "      userClassNames=\"com.liferay.portal.kernel.security.jaas.PortalPrincipal\""
-   "      roleClassNames=\"com.liferay.portal.kernel.security.jaas.PortalRole\""
-   "  />-->"
-   " "
-   "  <!--"
-   "  Uncomment the following to disable persistent sessions across reboots."
-   "  -->"
-   " "
-   "  <!--<Manager pathname=\"\" />-->"
-   " "
-   "  <!--"
-   "  Uncomment the following to not use sessions. See the property"
-   "  \"session.disabled\" in portal.properties."
-   "  -->"
-   " "
-   "  <!--<Manager className=\"com.liferay.support.tomcat.session.SessionLessManagerBase\" />-->"
-   ""
-   "</Context>"])
+(s/defn
+  etc-tomcat-Catalina-localhost-ROOT-xml :- [s/Str]
+  []
+  (string/split
+    (selmer/render-file "liferay_Root.xml.template" {})
+    #"\n"))
 
 (def etc-tomcat7-catalina-properties-lines
   [
@@ -229,7 +211,10 @@
      :java
       {:java-version 8}
      :tomcat-source
-      {:tomcat-managed {:package-name "tomcat8"}}}}))
+      {:tomcat-managed {:package-name "tomcat8"}}
+     :root-xml {:os-user os-user
+                :webapps-root-xml-location "/etc/tomcat8/Catalina/localhost/ROOT.xml"
+                :lines (etc-tomcat-Catalina-localhost-ROOT-xml)}}}))
 
 (s/defn
   lr-6x-infra-configuration :- infra/InfraResult
@@ -273,7 +258,7 @@
                            :lines etc-tomcat7-catalina-properties-lines}
      :root-xml {:os-user os-user
                 :webapps-root-xml-location "/etc/tomcat7/Catalina/localhost/ROOT.xml"
-                :lines etc-tomcat7-Catalina-localhost-ROOT-xml}}}))
+                :lines (etc-tomcat-Catalina-localhost-ROOT-xml)}}}))
 
 (s/defn
   infra-configuration :- infra/InfraResult
