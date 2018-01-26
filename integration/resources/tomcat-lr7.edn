@@ -1,0 +1,2 @@
+{:lr-7x {:xmx-megabbyte 2560            ; e.g. 6072 or 2560
+         :lr-home "/var/lib/liferay/"}} ; e.g. /var/lib/liferay

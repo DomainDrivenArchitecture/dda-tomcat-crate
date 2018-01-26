@@ -1,0 +1,4 @@
+{:existing [{:node-name "YOUR_VM"
+                    :node-ip "IP"}]
+ :provisioning-user {:login "LOGIN"
+                     :password "PASSWORD"}}
