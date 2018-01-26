@@ -1,12 +1,11 @@
-(defproject dda/dda-tomcat-crate "0.3.0-SNAPSHOT"
+(defproject dda/dda-tomcat-crate "1.0.0-SNAPSHOT"
   :description "tomcat crate of dda-pallet project"
   :url "https://www.domaindrivenarchitecture.org"
   :license {:name "Apache License, Version 2.0"
             :url "https://www.apache.org/licenses/LICENSE-2.0.html"}
   :dependencies [[org.clojure/clojure "1.7.0"]
-                 [dda/dda-pallet-commons "0.7.1-SNAPSHOT"]
-                 [dda/dda-pallet "0.7.0-SNAPSHOT"]
-                 [selmer "1.11.5"]]
+                 [dda/dda-pallet "1.0.1"]
+                 [selmer "1.11.6"]]
   :repositories [["snapshots" :clojars]
                  ["releases" :clojars]]
   :deploy-repositories [["snapshots" :clojars]
