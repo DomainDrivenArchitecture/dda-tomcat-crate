@@ -46,7 +46,7 @@ Example content of file `targets.edn`:
 Example content of file `tomcat.edn`:
 ```clojure
 {:standalone                                  ; The keyword :standalone specifies a tomcat installation without httpd
-  {:xmx-megabbyte 512}}                       ; Specifies the maximum heap size.
+  {:xmx-megabyte 512}}                       ; Specifies the maximum heap size.
 ```         
 
 The tomcat configuration is responsible for configuring and installing tomcat only. If you wish to use it together with liferay see the dda-liferay-crate for configuration and usage. 
@@ -115,7 +115,7 @@ Please note, the Liferay domain configurations are only usable if you wish to us
 (def DomainConfig
   "Represents the tomcat configuration."
   {:standalone                                
-  {(s/optional-key :xmx-megabbyte) s/Num}})
+  {(s/optional-key :xmx-megabyte) s/Num}})
 ```
 
 The domain configurations provided by us derive from our own needs and customers. You are free to create your own domain configuration if you have the need for different configuration options. The complete configuration options are only exposed on an infrastructure level.
