@@ -21,14 +21,14 @@
 
 (def DomainConfig
   "Represents the tomcat configuration."
-  {:standalone {(s/optional-key :xmx-megabbyte) s/Num}})
+  {:standalone {(s/optional-key :xmx-megabyte) s/Num}})
 
 (s/defn
   infra-configuration :- infra/InfraResult
   [domain-config :- DomainConfig]
   (let [{:keys [standalone]} domain-config
-        {:keys [xmx-megabbyte]
-         :or {xmx-megabbyte 512}} standalone]
+        {:keys [xmx-megabyte]
+         :or {xmx-megabyte 512}} standalone]
     {infra/facility
       {:server-xml
         {:tomcat-version 8
@@ -48,7 +48,7 @@
         {:tomcat-version 8
          :managed {:config-default-location "/etc/default/tomcat8"}
          :settings #{}
-         :xmx (str xmx-megabbyte "m")
+         :xmx (str xmx-megabyte "m")
          :xms "512m"
          :max-perm-size "128m"
          :os-user "tomcat8"

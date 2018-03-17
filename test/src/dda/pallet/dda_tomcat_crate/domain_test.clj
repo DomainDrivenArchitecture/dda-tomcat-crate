@@ -25,12 +25,12 @@
     "test the domain spec"
       (is
         (s/validate sut/DomainConfig
-                    {:lr-6x {:xmx-megabbyte 2560
+                    {:lr-6x {:xmx-megabyte 2560
                              :lr-home "/var/lib/liferay/"}}))
       (is
         (s/validate sut/DomainConfig
-                    {:lr-7x {:xmx-megabbyte 2560
+                    {:lr-7x {:xmx-megabyte 2560
                              :lr-home "/var/lib/liferay/"}}))
       (is
         (s/validate sut/DomainConfig
-                    {:standalone {:xmx-megabbyte 2560}}))))
+                    {:standalone {:xmx-megabyte 2560}}))))

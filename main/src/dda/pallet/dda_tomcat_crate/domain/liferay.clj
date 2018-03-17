@@ -26,7 +26,7 @@
 
 ; -------------------  schemas  ---------------------
 (def LrCommon
-  {:xmx-megabbyte s/Num                   ; e.g. 6072 or 2560
+  {:xmx-megabyte s/Num                   ; e.g. 6072 or 2560
    :lr-home dir-model/NonRootDirectory}) ; e.g. /var/lib/liferay
 
 (def LR6
@@ -56,7 +56,7 @@
 (s/defn
   lr-7x-infra-configuration :- infra/InfraResult
   [domain-config :- LR6]
-  (let [{:keys [xmx-megabbyte lr-home]} domain-config]
+  (let [{:keys [xmx-megabyte lr-home]} domain-config]
    {infra/facility
     {:server-xml
       {:tomcat-version 8
@@ -78,7 +78,7 @@
        :os-user "tomcat8"
        :java-home "/usr/lib/jvm/java-1.8.0-openjdk-amd64"
        :xms "1536m"
-       :xmx (str xmx-megabbyte "m")
+       :xmx (str xmx-megabyte "m")
        :max-perm-size "512m"
        :settings #{:prefer-ipv4 :disable-cl-clear-ref
                    :conc-mark-sweep-gc :timezone-gmt
@@ -101,7 +101,7 @@
 (s/defn
   lr-6x-infra-configuration :- infra/InfraResult
   [domain-config :- LR6]
-  (let [{:keys [xmx-megabbyte lr-home]} domain-config]
+  (let [{:keys [xmx-megabyte lr-home]} domain-config]
    {infra/facility
     {:server-xml
       {:tomcat-version 7
@@ -123,7 +123,7 @@
        :settings #{:prefer-ipv4 :disable-cl-clear-ref
                    :conc-mark-sweep-gc :timezone-gmt
                    :disable-tomcat-security}
-       :xmx (str xmx-megabbyte "m")
+       :xmx (str xmx-megabyte "m")
        :xms "1536m"
        :max-perm-size "512m"
        :os-user os-user

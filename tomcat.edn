@@ -1,1 +1,1 @@
-{:standalone {:xmx-megabbyte 512}}
+{:standalone {:xmx-megabyte 512}}
