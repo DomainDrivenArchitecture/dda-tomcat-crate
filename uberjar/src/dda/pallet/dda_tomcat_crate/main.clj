@@ -20,60 +20,30 @@
   (:require
     [clojure.string :as str]
     [clojure.tools.cli :as cli]
-    [dda.pallet.commons.operation :as operation]
-    [dda.pallet.commons.existing :as existing]
+    [dda.config.commons.styled-output :as styled]
+    [dda.pallet.core.app :as core-app]
     [dda.pallet.dda-tomcat-crate.app :as app]))
-
-(defn execute-server-test
-  [domain-config targets]
-  (let [{:keys [existing provisioning-user]} targets]
-    (operation/do-server-test
-     (existing/provider {:dda-tomcat existing})
-     (app/existing-provisioning-spec
-       domain-config
-       provisioning-user)
-     :summarize-session true)))
-
-(defn execute-configure
-  [domain-config targets]
-  (let [{:keys [existing provisioning-user]} targets]
-    (operation/do-apply-configure
-     (existing/provider {:dda-tomcat existing})
-     (app/existing-provisioning-spec
-       domain-config
-       provisioning-user)
-     :summarize-session true)))
-
-(defn execute-install
-  [domain-config targets]
-  (let [{:keys [existing provisioning-user]} targets]
-    (operation/do-apply-install
-     (existing/provider {:dda-tomcat existing})
-     (app/existing-provisioning-spec
-       domain-config
-       provisioning-user)
-     :summarize-session true)))
 
 (def cli-options
   [["-h" "--help"]
-   ["-s" "--server-test"]
-   ["-c" "--configure"]
-   ["-t" "--targets TARGETS.edn" "edn file containing the targets to install on."
-    :default "targets.edn"]])
+   ["-i" "--install-dependencies"]
+   ["-t" "--targets [localhost-target.edn]" "edn file containing the targets to test."
+    :default "localhost-target.edn"]
+   ["-v" "--verbose"]])
 
 (defn usage [options-summary]
   (str/join
    \newline
-   ["dda-managed-vm installs a variety of standard software and configs on your personal vm"
+   ["dda-tomcat-crate installs tomcat to a server"
     ""
-    "Usage: java -jar dda-managed-vm-[version]-standalone.jar [options] vm-spec-file"
+    "Usage: java -jar dda-tomcat-crate-[version]-standalone.jar [options] tomcat.edn"
     ""
     "Options:"
     options-summary
     ""
-    "vm-spec-file"
+    "tomcat.edn"
     "  - follows the edn format."
-    "  - has to be a valid DdaVmDomainConfig (see: https://github.com/DomainDrivenArchitecture/dda-managed-vm)"
+    "  - has to be a valid DomainConfig (see: https://github.com/DomainDrivenArchitecture/dda-tomcat-crate)"
     ""]))
 
 (defn error-msg [errors]
@@ -85,17 +55,20 @@
   (System/exit status))
 
 (defn -main [& args]
-  (let [{:keys [options arguments errors summary help]} (cli/parse-opts args cli-options)]
+  (let [{:keys [options arguments errors summary help]} (cli/parse-opts args cli-options)
+        verbose (if (contains? options :verbose) 1 0)]
     (cond
       help (exit 0 (usage summary))
       errors (exit 1 (error-msg errors))
       (not= (count arguments) 1) (exit 1 (usage summary))
-      (:server-test options) (execute-server-test
-                               (app/load-domain (first arguments))
-                               (app/load-targets (:targets options)))
-      (:configure options) (execute-configure
-                             (app/load-domain (first arguments))
-                             (app/load-targets (:targets options)))
-      :default (execute-install
-                 (app/load-domain (first arguments))
-                 (app/load-targets (:targets options))))))
+      (:install-dependencies options) (core-app/existing-install
+                                        app/crate-app
+                                        {:domain (first arguments)
+                                         :targets (:targets options)})
+      :default (if (core-app/existing-serverspec
+                     app/crate-app
+                     {:domain (first arguments)
+                      :targets (:targets options)
+                      :verbosity verbose})
+                   (exit 0 (styled/styled "ALL TESTS PASSED" :green))
+                   (exit 2 (styled/styled "SOME TESTS FAILED" :red))))))

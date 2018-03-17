@@ -19,7 +19,7 @@
     [schema.core :as s]
     [pallet.api :as api]
     [pallet.actions :as actions]
-    [dda.pallet.core.dda-crate :as dda-crate]
+    [dda.pallet.core.infra :as core-infra]
     [dda.pallet.dda-tomcat-crate.infra.java :as java]
     [dda.pallet.dda-tomcat-crate.infra.tomcat-source :as tomcat-source]
     [dda.pallet.dda-tomcat-crate.infra.tomcat-vm :as tomcat-vm]
@@ -73,24 +73,21 @@
   [config :- TomcatConfig]
   (actions/package-manager :update))
 
-(defmethod dda-crate/dda-init
-  facility [dda-crate config]
+(defmethod core-infra/dda-init
+  facility [core-infra config]
   (init config))
 
-(defmethod dda-crate/dda-install
-  facility [dda-crate config]
+(defmethod core-infra/dda-install
+  facility [core-infra config]
   (install config))
 
-(defmethod dda-crate/dda-configure
-  facility [dda-crate config]
+(defmethod core-infra/dda-configure
+  facility [core-infra config]
   (configure config))
 
 (def dda-tomcat-crate
-  (dda-crate/make-dda-crate
-    :facility facility
-    :version [0 1 0]
-    :config-schema TomcatConfig
-    :config-default {}))
+  (core-infra/make-dda-crate-infra
+    :facility facility))
 
 (def with-tomcat
-  (dda-crate/create-server-spec dda-tomcat-crate))
+  (core-infra/create-infra-plan dda-tomcat-crate))

@@ -16,12 +16,10 @@
 (ns dda.pallet.dda-tomcat-crate.app
   (:require
     [schema.core :as s]
-    [dda.cm.group :as group]
+    [dda.pallet.core.app :as core-app]
     [dda.pallet.dda-config-crate.infra :as config-crate]
     [dda.pallet.dda-tomcat-crate.infra :as infra]
-    [dda.pallet.dda-tomcat-crate.domain :as domain]
-    [dda.pallet.commons.existing :as existing]
-    [dda.pallet.commons.external-config :as ext-config]))
+    [dda.pallet.dda-tomcat-crate.domain :as domain]))
 
 
 (def with-tomcat infra/with-tomcat)
@@ -30,43 +28,29 @@
 
 (def DomainConfig domain/DomainConfig)
 
-(def ProvisioningUser existing/ProvisioningUser)
-
-(def Targets existing/Targets)
-
 (def AppConfig
   {:group-specific-config
    {s/Keyword InfraResult}})
 
 (s/defn ^:always-validate
-  tomcat-group-spec
-  [app-config :- AppConfig]
-  (group/group-spec
-    app-config [(config-crate/with-config app-config)
-                with-tomcat]))
-
-(s/defn ^:always-validate
-  load-targets :- Targets
-  [file-name :- s/Str]
-  (existing/load-targets file-name))
-
-(s/defn ^:always-validate
-  load-domain :- DomainConfig
-  [file-name :- s/Str]
-  (ext-config/parse-config file-name))
-
-(s/defn ^:always-validate
   app-configuration :- AppConfig
-  [domain-config :- DomainConfig & options]
+  [domain-config :- DomainConfig
+   & options]
  (let [{:keys [group-key] :or {group-key infra/facility}} options]
   {:group-specific-config
      {group-key (domain/infra-configuration domain-config)}}))
 
-(s/defn ^:always-validate
-  existing-provisioning-spec
-  "Creates an integrated group spec from a domain config and a provisioning user."
-  [domain-config :- DomainConfig
-   provisioning-user :- ProvisioningUser]
-  (merge
-    (tomcat-group-spec (app-configuration domain-config))
-    (existing/node-spec provisioning-user)))
+(s/defmethod ^:always-validate
+  core-app/group-spec infra/facility
+  [crate-app
+   domain-config :- DomainConfig]
+  (let [app-config (app-configuration domain-config)]
+    (core-app/pallet-group-spec
+      app-config [(config-crate/with-config app-config)
+                  with-tomcat])))
+
+(def crate-app (core-app/make-dda-crate-app
+                  :facility infra/facility
+                  :domain-schema DomainConfig
+                  :domain-schema-resolved DomainConfig
+                  :default-domain-file "tomcat.edn"))
