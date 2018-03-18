@@ -31,4 +31,11 @@
 (s/defn ^:always-validate
   infra-configuration :- infra/InfraResult
   [domain-config :- DomainConfig]
-  (lr/infra-configuration domain-config))
+  (let [{:keys [standalone lr-6x lr-7x]} domain-config]
+    (cond
+      (contains? domain-config :lr-6x)
+      (lr/lr-6x-infra-configuration lr-6x)
+      (contains? domain-config :lr-7x)
+      (lr/lr-7x-infra-configuration lr-7x)
+      (contains? domain-config :standalone)
+      (lr/lr-6x-infra-configuration standalone))))

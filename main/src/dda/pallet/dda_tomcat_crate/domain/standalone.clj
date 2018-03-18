@@ -19,13 +19,17 @@
    [schema.core :as s]
    [dda.pallet.dda-tomcat-crate.infra :as infra]))
 
+(def StandaloneConfig
+  "Represents the tomcat configuration."
+  {(s/optional-key :xmx-megabyte) s/Num})
+
 (def DomainConfig
   "Represents the tomcat configuration."
-  {:standalone {(s/optional-key :xmx-megabyte) s/Num}})
+  {:standalone StandaloneConfig})
 
 (s/defn
   infra-configuration :- infra/InfraResult
-  [domain-config :- DomainConfig]
+  [domain-config :- StandaloneConfig]
   (let [{:keys [standalone]} domain-config
         {:keys [xmx-megabyte]
          :or {xmx-megabyte 512}} standalone]

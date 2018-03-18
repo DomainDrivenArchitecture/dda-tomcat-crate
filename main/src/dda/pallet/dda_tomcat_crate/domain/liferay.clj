@@ -55,7 +55,7 @@
 
 (s/defn
   lr-7x-infra-configuration :- infra/InfraResult
-  [domain-config :- LR6]
+  [domain-config :- LrCommon]
   (let [{:keys [xmx-megabyte lr-home]} domain-config]
    {infra/facility
     {:server-xml
@@ -100,7 +100,7 @@
 
 (s/defn
   lr-6x-infra-configuration :- infra/InfraResult
-  [domain-config :- LR6]
+  [domain-config :- LrCommon]
   (let [{:keys [xmx-megabyte lr-home]} domain-config]
    {infra/facility
     {:server-xml
@@ -142,13 +142,3 @@
      :root-xml {:os-user os-user
                 :webapps-root-xml-location "/etc/tomcat7/Catalina/localhost/ROOT.xml"
                 :lines (etc-tomcat-Catalina-localhost-ROOT-xml)}}}))
-
-(s/defn
-  infra-configuration :- infra/InfraResult
-  [domain-config :- DomainConfig]
-  (let [{:keys [lr-6x lr-7x]} domain-config]
-    (cond
-      (contains? domain-config :lr-6x)
-      (lr-6x-infra-configuration lr-6x)
-      :else
-      (lr-7x-infra-configuration lr-7x))))
