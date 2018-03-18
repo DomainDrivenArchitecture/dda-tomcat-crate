@@ -30,9 +30,8 @@
 (s/defn
   infra-configuration :- infra/InfraResult
   [domain-config :- StandaloneConfig]
-  (let [{:keys [standalone]} domain-config
-        {:keys [xmx-megabyte]
-         :or {xmx-megabyte 512}} standalone]
+  (let [{:keys [xmx-megabyte]
+         :or {xmx-megabyte 512}} domain-config]
     {infra/facility
       {:server-xml
         {:tomcat-version 8
