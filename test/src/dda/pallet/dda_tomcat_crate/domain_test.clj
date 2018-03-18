@@ -180,7 +180,7 @@
                          :managed
                          {:config-default-location "/etc/default/tomcat8"},
                          :settings #{},
-                         :xmx "512m",
+                         :xmx "2560m",
                          :xms "512m",
                          :max-perm-size "128m",
                          :os-user "tomcat8",
@@ -188,6 +188,37 @@
                         :java {:java-version 8},
                         :tomcat-source {:tomcat-managed {:package-name "tomcat8"}}}}})
 
+(def pair4 {:input {:app-server {:xmx-megabyte 2560}}
+            :expected {:dda-tomcat
+                       {:server-xml
+                        {:tomcat-version 8,
+                         :executor-max-threads "151",
+                         :service-name "Catalina",
+                         :connector-port "8009",
+                         :executor-daemon "true",
+                         :uri-encoding "UTF-8",
+                         :config-server-xml-location "/etc/tomcat8/server.xml",
+                         :connection-timeout "61000",
+                         :start-ssl false,
+                         :os-user "tomcat8",
+                         :connector-protocol "AJP/1.3",
+                         :shutdown-port "8005",
+                         :executor-min-spare-threads "4"},
+                        :tomct-vm
+                        {:tomcat-version 8,
+                         :managed
+                         {:config-default-location "/etc/default/tomcat8"},
+                         :settings #{},
+                         :xmx "2560m",
+                         :xms "512m",
+                         :max-perm-size "128m",
+                         :os-user "tomcat8",
+                         :java-home "/usr/lib/jvm/java-1.8.0-openjdk-amd64"},
+                        :java {:java-version 8},
+                        :tomcat-source {:tomcat-managed {:package-name "tomcat8"}}
+                        :remove-manager-webapps
+                        {:webapps-location "/var/lib/tomcat8/webapps/",
+                         :os-user "tomcat8"}}}})
 
 (deftest domain-validation-test
   (testing
@@ -197,4 +228,6 @@
       (is (= (:expected pair2)
              (sut/infra-configuration (:input pair2))))
       (is (= (:expected pair3)
-             (sut/infra-configuration (:input pair3))))))
+             (sut/infra-configuration (:input pair3))))
+      (is (= (:expected pair4)
+             (sut/infra-configuration (:input pair4))))))

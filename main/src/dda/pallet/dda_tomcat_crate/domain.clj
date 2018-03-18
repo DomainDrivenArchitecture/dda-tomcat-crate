@@ -19,23 +19,27 @@
    [schema.core :as s]
    [dda.pallet.dda-tomcat-crate.infra :as infra]
    [dda.pallet.dda-tomcat-crate.domain.liferay :as lr]
-   [dda.pallet.dda-tomcat-crate.domain.standalone :as standalone]))
+   [dda.pallet.dda-tomcat-crate.domain.standalone :as standalone]
+   [dda.pallet.dda-tomcat-crate.domain.app-server :as app-server]))
 
 (def DomainConfig
   "Represents all possible domain configurations."
   (s/either
     lr/LR6
     lr/LR7
-    standalone/DomainConfig))
+    standalone/DomainConfig
+    app-server/DomainConfig))
 
 (s/defn ^:always-validate
   infra-configuration :- infra/InfraResult
   [domain-config :- DomainConfig]
-  (let [{:keys [standalone lr-6x lr-7x]} domain-config]
+  (let [{:keys [standalone lr-6x lr-7x app-server]} domain-config]
     (cond
       (contains? domain-config :lr-6x)
       (lr/lr-6x-infra-configuration lr-6x)
       (contains? domain-config :lr-7x)
       (lr/lr-7x-infra-configuration lr-7x)
       (contains? domain-config :standalone)
-      (standalone/infra-configuration standalone))))
+      (standalone/infra-configuration standalone)
+      (contains? domain-config :app-server)
+      (app-server/infra-configuration app-server))))
