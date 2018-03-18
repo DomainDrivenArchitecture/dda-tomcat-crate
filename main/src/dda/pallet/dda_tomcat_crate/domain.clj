@@ -38,4 +38,4 @@
       (contains? domain-config :lr-7x)
       (lr/lr-7x-infra-configuration lr-7x)
       (contains? domain-config :standalone)
-      (lr/lr-6x-infra-configuration standalone))))
+      (standalone/infra-configuration standalone))))

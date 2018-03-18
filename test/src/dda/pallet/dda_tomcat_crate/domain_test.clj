@@ -162,69 +162,31 @@
 (def pair3 {:input {:standalone {:xmx-megabyte 2560}}
             :expected {:dda-tomcat
                        {:server-xml
-                        {:tomcat-version 7,
+                        {:tomcat-version 8,
                          :executor-max-threads "151",
                          :service-name "Catalina",
-                         :connector-port "8009",
-                         :executor-daemon "false",
+                         :connector-port "8080",
+                         :executor-daemon "true",
                          :uri-encoding "UTF-8",
-                         :config-server-xml-location "/etc/tomcat7/server.xml",
+                         :config-server-xml-location "/etc/tomcat8/server.xml",
                          :connection-timeout "61000",
-                         :start-ssl true,
-                         :os-user "tomcat7",
-                         :connector-protocol "AJP/1.3",
+                         :start-ssl false,
+                         :os-user "tomcat8",
+                         :connector-protocol "HTTP/1.1",
                          :shutdown-port "8005",
-                         :executor-min-spare-threads "48"},
+                         :executor-min-spare-threads "4"},
                         :tomct-vm
-                        {:tomcat-version 7,
-                         :catalina-opts "-Dcustom.lr.dir=",
-                         :settings
-                         #{:timezone-gmt :disable-tomcat-security
-                           :conc-mark-sweep-gc :prefer-ipv4 :disable-cl-clear-ref},
-                         :xmx "2560m",
+                        {:tomcat-version 8,
                          :managed
-                         {:config-default-location "/etc/default/tomcat7"},
-                         :xms "1536m",
-                         :max-perm-size "512m",
-                         :os-user "tomcat7",
+                         {:config-default-location "/etc/default/tomcat8"},
+                         :settings #{},
+                         :xmx "512m",
+                         :xms "512m",
+                         :max-perm-size "128m",
+                         :os-user "tomcat8",
                          :java-home "/usr/lib/jvm/java-1.8.0-openjdk-amd64"},
                         :java {:java-version 8},
-                        :tomcat-source {:tomcat-managed {:package-name "tomcat7"}},
-                        :catalina-properties
-                        {:tomcat-version 7,
-                         :os-user "tomcat7",
-                         :config-catalina-properties-location
-                         "/etc/tomcat7/catalina.properties",
-                         :common-loader ",/var/lib/liferay/lib/*.jar"},
-                        :root-xml
-                        {:os-user "tomcat7",
-                         :webapps-root-xml-location
-                         "/etc/tomcat7/Catalina/localhost/ROOT.xml",
-                         :lines
-                         ["<Context path=\"\" crossContext=\"true\">"
-                          ""
-                          "    <!-- JAAS -->"
-                          ""
-                          "    <!--<Realm"
-                          "        className=\"org.apache.catalina.realm.JAASRealm\""
-                          "        appName=\"PortalRealm\""
-                          "        userClassNames=\"com.liferay.portal.kernel.security.jaas.PortalPrincipal\""
-                          "        roleClassNames=\"com.liferay.portal.kernel.security.jaas.PortalRole\""
-                          "    />-->"
-                          ""
-                          "    <!--"
-                          "    Uncomment the following to disable persistent sessions across reboots."
-                          "    -->"
-                          ""
-                          "    <!--<Manager pathname=\"\" />-->"
-                          ""
-                          "    <!--"
-                          "    Uncomment the following to not use sessions. See the property"
-                          "    \"session.disabled\" in portal.properties."
-                          "    -->"
-                          ""
-                          "    <!--<Manager className=\"com.liferay.support.tomcat.session.SessionLessManagerBase\" />-->"
-                          "</Context>"]}}}})
+                        :tomcat-source {:tomcat-managed {:package-name "tomcat8"}}}}})
 
 
 (deftest domain-validation-test
