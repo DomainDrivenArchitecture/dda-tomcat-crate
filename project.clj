@@ -11,6 +11,7 @@
   :deploy-repositories [["snapshots" :clojars]
                         ["releases" :clojars]]
   :source-paths ["main/src"]
+  :resource-paths ["main/resources"]
   :profiles {:dev
              {:source-paths ["integration/src"
                              "test/src"
