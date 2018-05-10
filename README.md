@@ -72,21 +72,22 @@ Some details about the architecture: We provide two levels of API. **Domain** is
 ### Targets
 The schema for the targets config is:
 ```clojure
-(def ExistingNode {:node-name Str                   ; your name for the node
-  :node-ip Str                     ; nodes ip4 address       
+(def ExistingNode {:node-name Str  ; your name for the node
+  :node-ip Str                     ; nodes ip4 address
   })
 
-  (def ProvisioningUser {:login Str                   ; user account used for provisioning / executing tests
-    (optional-key :password) Str ; password, is no authorized ssh key is avail.
-    })
+(def ProvisioningUser {:login Str                   ; user account used for provisioning / executing tests
+  (optional-key :password) Str ; password, is no authorized ssh key is avail.
+  })
 
-    (def Targets {:existing [ExistingNode]              ; nodes to test or install
-      :provisioning-user ProvisioningUser   ; common user account on all nodes given above
-      })
-      ```
+(def Targets {:existing [ExistingNode]              ; nodes to test or install
+  :provisioning-user ProvisioningUser   ; common user account on all nodes given above
+  })
+```
 
 ### Domain API
 The schema for the tomcat configuration is:
+
 ```clojure
 (def LrCommon
   {:xmx-megabyte s/Num                   ; e.g. 6072 or 2560
@@ -105,14 +106,16 @@ The schema for the tomcat configuration is:
 (def DomainConfig
   "Represents all possible domain configurations."
   (s/either
-    lr/LR6            
+    lr/LR6
     lr/LR7
     standalone/DomainConfig))
 ```
+
 Please note, the Liferay domain configurations are only usable if you wish to use a liferay together with tomcat. They might be usable for other scenarios but will be most likely less than ideal.
 
 ### Infra API
 The Infra configuration is a configuration on the infrastructure level of a crate. It contains the complete configuration options that are possible with the crate functions. The tomcat crate does not use any infrastructure config form any other crate.
+
 ```clojure
 (def JavaConfig
   {:java-version s/Num
