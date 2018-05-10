@@ -21,7 +21,7 @@
               :dependencies
               [[org.domaindrivenarchitecture/pallet-aws "0.2.8.2"]
                [com.palletops/pallet "0.8.12" :classifier "tests"]
-               [dda/dda-serverspec-crate "1.0.6-SNAPSHOT"]
+               [dda/dda-serverspec-crate "1.0.5"]
                [ch.qos.logback/logback-classic "1.3.0-alpha4"]
                [org.slf4j/jcl-over-slf4j "1.8.0-beta2"]]
               :plugins
