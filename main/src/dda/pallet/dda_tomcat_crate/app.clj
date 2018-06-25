@@ -21,7 +21,6 @@
     [dda.pallet.dda-tomcat-crate.infra :as infra]
     [dda.pallet.dda-tomcat-crate.domain :as domain]))
 
-
 (def with-tomcat infra/with-tomcat)
 
 (def InfraResult infra/InfraResult)
