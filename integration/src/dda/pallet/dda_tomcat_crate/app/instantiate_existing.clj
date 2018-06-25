@@ -23,7 +23,7 @@
   [& options]
   (let [{:keys [domain targets summarize-session]
          :or {domain "tomcat.edn"
-              targets "localhost-target.edn"
+              targets "targets.edn"
               summarize-session true}} options]
     (core-app/existing-install app/crate-app
                           {:domain domain
@@ -33,7 +33,7 @@
  [& options]
  (let [{:keys [domain targets summarize-session]
         :or {domain "tomcat.edn"
-             targets "localhost-target.edn"
+             targets "targets.edn"
              summarize-session true}} options]
   (core-app/existing-configure app/crate-app
                           {:domain domain
@@ -43,7 +43,7 @@
   [& options]
   (let [{:keys [domain targets summarize-session]
          :or {domain "tomcat.edn"
-              targets "localhost-target.edn"
+              targets "targets.edn"
               summarize-session true}} options]
     (core-app/existing-serverspec app/crate-app
                              {:domain domain
