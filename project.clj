@@ -3,8 +3,8 @@
   :url "https://www.domaindrivenarchitecture.org"
   :license {:name "Apache License, Version 2.0"
             :url "https://www.apache.org/licenses/LICENSE-2.0.html"}
-  :dependencies [[dda/dda-pallet "2.2.0"]
-                 [selmer "1.11.7"]]
+  :dependencies [[dda/dda-pallet "2.2.1"]
+                 [selmer "1.11.8"]]
   :repositories [["snapshots" :clojars]
                  ["releases" :clojars]]
   :deploy-repositories [["snapshots" :clojars]
